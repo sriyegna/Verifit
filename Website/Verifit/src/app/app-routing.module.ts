@@ -5,6 +5,11 @@ import { RegistrationComponent } from './user/registration/registration.componen
 import { LoginComponent } from './user/login/login.component';
 import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './auth/auth.guard';
+import { ForbiddenComponent } from './forbidden/forbidden.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import { BronzePanelComponent } from './bronze-panel/bronze-panel.component';
+import { GoldPanelComponent } from './gold-panel/gold-panel.component';
+import { SilverPanelComponent } from './silver-panel/silver-panel.component';
 
 
 const routes: Routes = [
@@ -15,7 +20,12 @@ const routes: Routes = [
       {path:'login', component:LoginComponent} // /user/login
     ]
   },
-  {path:'home', component:HomeComponent, canActivate:[AuthGuard]}
+  {path:'home', component:HomeComponent, canActivate:[AuthGuard]},
+  {path:'forbidden', component:ForbiddenComponent},
+  {path:'adminpanel', component:AdminPanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Admin']}},
+  {path:'bronzepanel', component:BronzePanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Bronze']}},
+  {path:'silverpanel', component:SilverPanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Silver']}},
+  {path:'goldpanel', component:GoldPanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Gold']}},
 ];
 
 @NgModule({

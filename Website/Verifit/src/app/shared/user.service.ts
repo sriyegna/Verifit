@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { HttpClient, HttpHeaders} from "@angular/common/http";
+import { HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +9,7 @@ export class UserService {
 
   constructor(private fb:FormBuilder, private http:HttpClient) { }
   readonly BaseURI = 'http://localhost:50360/api';
+  readonly NodeURI = 'http://localhost:1234';
 
 
   formModel = this.fb.group({
@@ -50,6 +51,41 @@ export class UserService {
 
   getUserProfile() {
     return this.http.get(this.BaseURI + '/UserProfile');
+  }
+
+  roleMatch(allowedRoles): boolean {
+    var isMatch = false;
+    var payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
+    var userRole = payLoad.role;
+    allowedRoles.forEach(element => {
+      if (userRole == element) {
+        isMatch = true;
+        return false;
+      }
+    });
+    return isMatch;
+  }
+
+  requestUSNumber(username) {
+    return this.http
+    .post(this.NodeURI + '/purchasenumberus', {
+      params: new HttpParams().set('username', username),
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
+    });
+  }
+
+  requestCANumber(username) {
+    console.log("reqcanum " + username);
+    // return this.http
+    // .post(this.NodeURI + '/purchasenumberca', {
+    //   params: new HttpParams().set('username', username),
+    //   headers: new HttpHeaders().set('Content-Type', 'application/json')
+    // });
+    return this.http.post(this.NodeURI + '/purchasenumberca', {data: {test: "123"}});
+  }
+
+  getuserUSNumbers(username) {
+    //return this.http.
   }
 
 }

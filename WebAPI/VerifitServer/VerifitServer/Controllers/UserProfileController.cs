@@ -34,5 +34,46 @@ namespace VerifitServer.Controllers
                 UserName = user.UserName
             };
         }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("ForAdmin")]
+        public string GetForAdmin()
+        {
+            return "Web method for Admin";
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Bronze")]
+        [Route("ForBronze")]
+        public string GetForBronze()
+        {
+            return "Web method for Bronze";
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Silver")]
+        [Route("ForSilver")]
+        public string GetForSilver()
+        {
+            return "Web method for Silver";
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Gold")]
+        [Route("ForGold")]
+        public string GetForGold()
+        {
+            return "Web method for Gold";
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin,Bronze,Silver,Gold")]
+        [Route("ForAll")]
+        public string GetForAll()
+        {
+            return "Web method for All";
+        }
+
     }
 }

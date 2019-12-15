@@ -40,6 +40,7 @@ namespace VerifitServer
                 );
 
             services.AddDefaultIdentity<ApplicationUser>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<AuthenticationContext>();
 
             services.Configure<IdentityOptions>(options =>
