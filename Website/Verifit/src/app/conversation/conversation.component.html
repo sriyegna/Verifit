@@ -1,0 +1,73 @@
+<nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand text-white">Verifit</a>
+    <button class="btn btn-danger my-2 my-sm-0" (click)="onLogout()">Logout</button>
+    <button class="btn btn-danger my-2 my-sm-0" routerLink='/home'>Home</button>
+    <button class="btn btn-danger my-2 my-sm-0" routerLink='/bronzepanel'>Bronze</button>
+</nav>
+
+<style>
+    /* Chat containers */
+    .container {
+      border: 2px solid #dedede;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+      float: right;
+    }
+    
+    /* Darker chat container */
+    .darker {
+      border-color: #ccc;
+      background-color: #ddd;
+      float: left;
+    }
+    
+    /* Clear floats */
+    .container::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+    
+    /* Style images */
+    .container img {
+      float: left;
+      max-width: 60px;
+      width: 100%;
+      margin-right: 20px;
+      border-radius: 50%;
+    }
+    
+    /* Style the right image */
+    .container img.right {
+      float: right;
+      margin-left: 20px;
+      margin-right:0;
+    }
+    
+    /* Style time text */
+    .time-right {
+      float: right;
+      color: #aaa;
+    }
+    
+    /* Style time text */
+    .time-left {
+      float: left;
+      color: #999;
+    }
+    </style>
+
+<div class="container" *ngFor="let message of messageList" [ngClass]="classDirection(message)">
+  <img src="/w3images/bandmember.jpg" alt="Avatar">
+  <p>{{message.Body}}</p>
+  <span class="time-right">{{message.TimeCreated}}</span>
+</div>
+
+<div class="input-group mb-3">
+  <input [(ngModel)]="messageBody" type="text" class="form-control" placeholder="Message" aria-label="Message" aria-describedby="basic-addon2">
+  <div class="input-group-append">
+    <button id="sendButton" class="btn btn-outline-secondary" type="button" (click)="sendMessage()">Send</button>
+  </div>
+</div>

@@ -3,6 +3,8 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import * as $ from "jquery";
 import { PhoneDetail } from './phone-detail.model';
+import { MessageDetail } from '../shared/message-detail.model';
+import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,8 @@ export class UserService {
   conversations;
   selectedNumber = "";
   username = "";
+  userPhoneNumbers;
+  userSelectedConversation;
 
   formModel = this.fb.group({
     UserName : ['', Validators.required],
@@ -117,10 +121,13 @@ export class UserService {
     return this.http.get(this.BaseURI + '/ConversationDetails/GetUserConversations/' + username + "&" + number)
   }
 
-  populateConversations() {
+  populateConversations(username) {
     console.log("Conversation Panel Loaded");
-    if (this.selectedNumber != "") {
-      this.getUsersConversations(this.username, this.selectedNumber).subscribe(
+    var selectedNumber = localStorage.getItem("selectedNumber");
+    console.log(selectedNumber);
+    console.log("Username in popcon:" + username);
+    if (selectedNumber != null) {
+      this.getUsersConversations(username, selectedNumber).subscribe(
         res => {
           console.log(res);
           this.conversations = res;
@@ -130,6 +137,36 @@ export class UserService {
         }
       );
     }
+  }
+
+  getUserConversationMessages(username, selectedNumber, toPhoneNumber) {
+    var number = (toPhoneNumber).substring(1, (toPhoneNumber).length);
+    var usernumber = (selectedNumber).substring(1, (selectedNumber).length);
+    return this.http.get(this.BaseURI + '/MessageDetails/GetUserConversationMessages/' + username + "&" + number + "&" + usernumber);
+  }
+
+  sendMessage(body, fromPhoneNumber, toPhoneNumber, username) {
+    let reqObj: MessageDetail;
+    reqObj = {
+      MessageSid: 'null',
+      Body: body,
+      UserName: username,
+      TimeCreated: 'null',
+      TimeSent: 'null',
+      Direction: 'null',
+      FromPhoneNumber: fromPhoneNumber,  
+      ToPhoneNumber: toPhoneNumber
+    }
+    console.log("Finally sending message");
+    console.log(reqObj);
+    return this.http.post(this.BaseURI + '/MessageDetails/SendMessage', reqObj);
+  }
+
+  getConversationMessages(username, fromPhoneNumber, toPhoneNumber) {
+    var fromnumber = (fromPhoneNumber).substring(1, (fromPhoneNumber).length);
+    var tonumber = (toPhoneNumber).substring(1, (toPhoneNumber).length);
+
+    return this.http.get(this.BaseURI + '/PhoneDetail/GetConversationMessages/' + username + "&" + fromnumber + "&" + tonumber);
   }
 
 }

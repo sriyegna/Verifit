@@ -10,6 +10,7 @@ import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { BronzePanelComponent } from './bronze-panel/bronze-panel.component';
 import { GoldPanelComponent } from './gold-panel/gold-panel.component';
 import { SilverPanelComponent } from './silver-panel/silver-panel.component';
+import { ConversationComponent } from './conversation/conversation.component';
 
 
 const routes: Routes = [
@@ -26,6 +27,7 @@ const routes: Routes = [
   {path:'bronzepanel', component:BronzePanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Bronze']}},
   {path:'silverpanel', component:SilverPanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Silver']}},
   {path:'goldpanel', component:GoldPanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Gold']}},
+  {path:'conversation', component:ConversationComponent}
 ];
 
 @NgModule({

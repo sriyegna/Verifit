@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 using VerifitServer.Models;
 
 namespace VerifitServer.Controllers
@@ -30,6 +32,24 @@ namespace VerifitServer.Controllers
         public async Task<ActionResult<IEnumerable<MessageDetail>>> GetMessageDetails()
         {
             return await _context.MessageDetails.ToListAsync();
+        }
+
+        [HttpGet("GetUserConversationMessages/{username}&{toPhoneNumber}&{fromPhoneNumber}")]
+        public async Task<ActionResult<IEnumerable<MessageDetail>>> GetUserConversationMessages(string username, string toPhoneNumber, string fromPhoneNumber)
+        {
+            var tophoneNumber = "+" + toPhoneNumber;
+            var fromphoneNumber = "+" + fromPhoneNumber;
+            var messageDetail = await _context.MessageDetails.Where(a => (a.UserName == (username).ToLower()) && 
+                (((a.ToPhoneNumber == tophoneNumber) && (a.FromPhoneNumber == fromphoneNumber)) || 
+                ((a.FromPhoneNumber == tophoneNumber) && (a.ToPhoneNumber == fromphoneNumber))))
+                .OrderBy(a => DateTime.Parse(a.TimeCreated)).ToListAsync();
+
+            if (messageDetail == null)
+            {
+                return NotFound();
+            }
+
+            return messageDetail;
         }
 
         // GET: api/MessageDetails/5
@@ -80,6 +100,32 @@ namespace VerifitServer.Controllers
         [HttpPost]
         public async Task<ActionResult<MessageDetail>> PostMessageDetail(MessageDetail messageDetail)
         {
+            _context.MessageDetails.Add(messageDetail);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetMessageDetail", new { id = messageDetail.MessageSid }, messageDetail);
+        }
+
+        // POST: api/SendMessage
+        [HttpPost]
+        [Route("SendMessage")]
+        public async Task<ActionResult<MessageDetail>> SendMessage(MessageDetail messageDetail)
+        {
+
+            //Get Signalwire number
+            TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
+
+            var message = MessageResource.Create(
+                from: new Twilio.Types.PhoneNumber(messageDetail.FromPhoneNumber),
+                body: messageDetail.Body,
+                to: new Twilio.Types.PhoneNumber(messageDetail.ToPhoneNumber)
+            );
+
+            messageDetail.MessageSid = message.Sid;
+            messageDetail.TimeCreated = (message.DateCreated).ToString();
+            messageDetail.TimeSent = messageDetail.TimeCreated;
+            messageDetail.Direction = (message.Direction).ToString();
+                       
             _context.MessageDetails.Add(messageDetail);
             await _context.SaveChangesAsync();
 

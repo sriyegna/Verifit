@@ -19,6 +19,7 @@ import { BronzePanelComponent } from './bronze-panel/bronze-panel.component';
 import { SilverPanelComponent } from './silver-panel/silver-panel.component';
 import { GoldPanelComponent } from './gold-panel/gold-panel.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
+import { ConversationComponent } from './conversation/conversation.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { ForbiddenComponent } from './forbidden/forbidden.component';
     BronzePanelComponent,
     SilverPanelComponent,
     GoldPanelComponent,
-    ForbiddenComponent
+    ForbiddenComponent,
+    ConversationComponent
   ],
   imports: [
     BrowserModule,
@@ -44,11 +46,13 @@ import { ForbiddenComponent } from './forbidden/forbidden.component';
       progressBar: true
     })
   ],
-  providers: [UserService,{
+  providers: [UserService,
+  {
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptor,
     multi: true
-  }],
+  },
+  ConversationComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

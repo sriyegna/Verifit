@@ -2,6 +2,7 @@ import { Component, OnInit, ɵCompiler_compileModuleSync__POST_R3__ } from '@ang
 import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { PhoneDetail } from '../shared/phone-detail.model';
+import { ConversationComponent } from '../conversation/conversation.component';
 
 @Component({
   selector: 'app-bronze-panel',
@@ -11,11 +12,14 @@ import { PhoneDetail } from '../shared/phone-detail.model';
 export class BronzePanelComponent implements OnInit {
 
   userDetails;
-  constructor(private router:Router, private service:UserService) { }
+  selectedNumber = "Phone Number";
+  constructor(private router:Router, private service:UserService, private conversation:ConversationComponent) { }
 
   getPhoneNumberList(string) {
     this.service.getUsersNumbers(this.userDetails.UserName).subscribe(
       res => {
+        this.service.userPhoneNumbers = res;
+        console.log("Outputting phone numbers");
         console.log(res);
         this.service.phoneNumbers = [];
         let array = res as Array<PhoneDetail>;
@@ -41,6 +45,12 @@ export class BronzePanelComponent implements OnInit {
         this.userDetails.role = payLoad.role;
         this.service.username = this.userDetails.UserName;
         this.getPhoneNumberList("init");
+
+        if (localStorage.getItem("selectedNumber") != null) {
+          console.log("Getting " + localStorage.getItem("selectedNumber"));
+          this.selectedNumber = localStorage.getItem("selectedNumber");
+          this.service.populateConversations(this.userDetails.UserName)
+        }
       },
       err => {
         console.log(err);
@@ -86,9 +96,19 @@ export class BronzePanelComponent implements OnInit {
   // }
 
   callFn(phoneNumber) {
-    console.log(phoneNumber);
+    console.log("Saving" + phoneNumber);
+    localStorage.setItem("selectedNumber", phoneNumber);
     this.service.selectedNumber = phoneNumber;
-    this.service.populateConversations();
+    this.selectedNumber = phoneNumber;
+    this.service.populateConversations(this.userDetails.UserName);
+  }
+
+  clickConversation(conversation) {
+    console.log(conversation);
+    this.service.userSelectedConversation = conversation;
+    this.conversation.userSelectedConversation = conversation;
+    localStorage.setItem("conversation", JSON.stringify(conversation));
+    this.router.navigate(['/conversation']);
   }
 
   

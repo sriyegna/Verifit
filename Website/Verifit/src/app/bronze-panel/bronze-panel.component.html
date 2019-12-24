@@ -7,10 +7,10 @@
 
 <div class="dropdown offset-2">
    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-     Phone Number
+     {{selectedNumber}}
    </button>
    <div id="phone-number-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-     <div class="dropdown-item" href="#" *ngFor="let phone of service.phoneNumbers" (click)="callFn(phone)">{{phone}}</div>
+     <div class="dropdown-item" href="#" *ngFor="let phone of service.userPhoneNumbers" (click)="callFn(phone.PhoneNumber)">{{phone.Country}} - {{phone.PhoneNumber}}</div>
    </div>
 </div>
 
@@ -46,6 +46,8 @@
 <button class="btn btn-primary" (click)="requestUSNumber()">Get a US number!</button>
 
 <button class="btn btn-danger" (click)="requestCANumber()">Get a CA number!</button>
+
+<button class="btn btn-success" (click)="newConversation()">New Conversation!</button>
 
 
 <style>
@@ -100,7 +102,7 @@
     }
     </style>
 
-<div class="container" *ngFor="let conversation of service.conversations">
+<div class="container" *ngFor="let conversation of service.conversations"  (click)="clickConversation(conversation)">
   <img src="/w3images/bandmember.jpg" alt="Avatar">
   <span>{{conversation.ToPhoneNumber}}</span>
   <p>{{conversation.LastMessage}}</p>
