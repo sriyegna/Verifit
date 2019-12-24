@@ -1,0 +1,16 @@
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\bin\Debug\netcoreapp2.2\appsettings.Development.json
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\bin\Debug\netcoreapp2.2\appsettings.json
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\bin\Debug\netcoreapp2.2\Properties\launchSettings.json
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\bin\Debug\netcoreapp2.2\PhoneAPI.deps.json
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\bin\Debug\netcoreapp2.2\PhoneAPI.runtimeconfig.json
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\bin\Debug\netcoreapp2.2\PhoneAPI.runtimeconfig.dev.json
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\bin\Debug\netcoreapp2.2\PhoneAPI.dll
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\bin\Debug\netcoreapp2.2\PhoneAPI.pdb
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\obj\Debug\netcoreapp2.2\PhoneAPI.csprojAssemblyReference.cache
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\obj\Debug\netcoreapp2.2\PhoneAPI.RazorAssemblyInfo.cache
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\obj\Debug\netcoreapp2.2\PhoneAPI.RazorAssemblyInfo.cs
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\obj\Debug\netcoreapp2.2\PhoneAPI.AssemblyInfoInputs.cache
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\obj\Debug\netcoreapp2.2\PhoneAPI.AssemblyInfo.cs
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\obj\Debug\netcoreapp2.2\PhoneAPI.RazorTargetAssemblyInfo.cache
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\obj\Debug\netcoreapp2.2\PhoneAPI.dll
+C:\Verifit\PhoneAPIReal\PhoneAPI\PhoneAPI\obj\Debug\netcoreapp2.2\PhoneAPI.pdb

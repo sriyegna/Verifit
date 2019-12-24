@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import * as $ from "jquery";
+import { PhoneDetail } from './phone-detail.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +13,10 @@ export class UserService {
   readonly BaseURI = 'http://localhost:50360/api';
   readonly NodeURI = 'http://localhost:1234';
 
+  phoneNumbers = [];
+  conversations;
+  selectedNumber = "";
+  username = "";
 
   formModel = this.fb.group({
     UserName : ['', Validators.required],
@@ -65,27 +71,65 @@ export class UserService {
     });
     return isMatch;
   }
-
-  requestUSNumber(username) {
-    return this.http
-    .post(this.NodeURI + '/purchasenumberus', {
-      params: new HttpParams().set('username', username),
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
+  
+  private getHeaders(headersConfig?: object): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      ...headersConfig,
     });
   }
 
-  requestCANumber(username) {
-    console.log("reqcanum " + username);
-    // return this.http
-    // .post(this.NodeURI + '/purchasenumberca', {
-    //   params: new HttpParams().set('username', username),
-    //   headers: new HttpHeaders().set('Content-Type', 'application/json')
-    // });
-    return this.http.post(this.NodeURI + '/purchasenumberca', {data: {test: "123"}});
+  requestUSNumber(username) {
+    //Testing netcore example
+    let reqObj: PhoneDetail;
+    reqObj = {
+      UserName: username,
+      Country: 'US',
+      PhoneSid: 'null',
+      PhoneNumber: 'null',
+      TimeCreated: 'null',
+      TimeExpired: 'null'
+    }
+    return this.http.post(this.BaseURI + '/PhoneDetail/RequestUsNumber', reqObj);
   }
 
-  getuserUSNumbers(username) {
-    //return this.http.
+  requestCANumber(username) {
+    //Testing netcore example
+    let reqObj: PhoneDetail;
+    reqObj = {
+      UserName: username,
+      Country: 'CAN',
+      PhoneSid: 'null',
+      PhoneNumber: 'null',
+      TimeCreated: 'null',
+      TimeExpired: 'null'
+    }
+    //return this.http.get(this.BaseURI + '/PhoneDetail/RequestUsNumber/' + username);
+    return this.http.post(this.BaseURI + '/PhoneDetail/RequestCanNumber', reqObj);
+  }
+
+  getUsersNumbers(username) {
+    return this.http.get(this.BaseURI + '/PhoneDetail/GetUserPhoneNumbers/' + username);
+  }
+
+  getUsersConversations(username, number) {
+    number = number.substring(1, number.length)
+    return this.http.get(this.BaseURI + '/ConversationDetails/GetUserConversations/' + username + "&" + number)
+  }
+
+  populateConversations() {
+    console.log("Conversation Panel Loaded");
+    if (this.selectedNumber != "") {
+      this.getUsersConversations(this.username, this.selectedNumber).subscribe(
+        res => {
+          console.log(res);
+          this.conversations = res;
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 
 }

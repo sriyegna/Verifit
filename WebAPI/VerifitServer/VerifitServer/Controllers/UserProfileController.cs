@@ -15,6 +15,7 @@ namespace VerifitServer.Controllers
     public class UserProfileController : ControllerBase
     {
         private UserManager<ApplicationUser> _userManager;
+
         public UserProfileController(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;

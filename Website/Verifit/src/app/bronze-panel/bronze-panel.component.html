@@ -5,6 +5,15 @@
     <button class="btn btn-danger my-2 my-sm-0" routerLink='/bronzepanel'>Bronze</button>
 </nav>
 
+<div class="dropdown offset-2">
+   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+     Phone Number
+   </button>
+   <div id="phone-number-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+     <div class="dropdown-item" href="#" *ngFor="let phone of service.phoneNumbers" (click)="callFn(phone)">{{phone}}</div>
+   </div>
+</div>
+
 <div class="card m-5" style="width:18rem" *ngIf="userDetails">
     <ul class="list-group">
         <li class="list-group-item">
@@ -17,19 +26,19 @@
             <strong>
                 Username : 
             </strong>
-            {{userDetails.userName}}
+            {{userDetails.UserName}}
         </li>
         <li class="list-group-item">
             <strong>
                 Full Name : 
             </strong>
-            {{userDetails.fullName}}
+            {{userDetails.FullName}}
         </li>
         <li class="list-group-item">
             <strong>
                 Email : 
             </strong>
-            {{userDetails.email}}
+            {{userDetails.Email}}
         </li>
     </ul>
 </div>
@@ -38,15 +47,62 @@
 
 <button class="btn btn-danger" (click)="requestCANumber()">Get a CA number!</button>
 
-<hr>
-<h2>US Numbers</h2>
 
-<div class="card" style="width: 18rem;">
-   <div class="card-body">
-     <h5 class="card-title">Card title</h5>
-     <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-     <a href="#" class="card-link">Card link</a>
-     <a href="#" class="card-link">Another link</a>
-   </div>
+<style>
+    /* Chat containers */
+    .container {
+      border: 2px solid #dedede;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    
+    /* Darker chat container */
+    .darker {
+      border-color: #ccc;
+      background-color: #ddd;
+    }
+    
+    /* Clear floats */
+    .container::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+    
+    /* Style images */
+    .container img {
+      float: left;
+      max-width: 60px;
+      width: 100%;
+      margin-right: 20px;
+      border-radius: 50%;
+    }
+    
+    /* Style the right image */
+    .container img.right {
+      float: right;
+      margin-left: 20px;
+      margin-right:0;
+    }
+    
+    /* Style time text */
+    .time-right {
+      float: right;
+      color: #aaa;
+    }
+    
+    /* Style time text */
+    .time-left {
+      float: left;
+      color: #999;
+    }
+    </style>
+
+<div class="container" *ngFor="let conversation of service.conversations">
+  <img src="/w3images/bandmember.jpg" alt="Avatar">
+  <span>{{conversation.ToPhoneNumber}}</span>
+  <p>{{conversation.LastMessage}}</p>
+  <span class="time-right">{{conversation.LastMessageTime}}</span>
 </div>

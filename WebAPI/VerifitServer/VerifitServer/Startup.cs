@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
+using PhoneAPI.Models;
 using VerifitServer.Models;
 
 namespace VerifitServer
@@ -33,7 +35,32 @@ namespace VerifitServer
 
             //Inject AppSettings Configuration
             services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(options =>
+                {
+                    var resolver = options.SerializerSettings.ContractResolver;
+                    if (resolver != null)
+                    {
+                        (resolver as DefaultContractResolver).NamingStrategy = null;
+                    }
+                })
+                .AddControllersAsServices();
+
+
+            //PhoneDb
+
+            services.AddDbContext<PhoneDetailContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+
+            services.AddDbContext<ConversationDetailContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+
+            services.AddDbContext<MessageDetailContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+
+
+            //Identity
+
 
             services.AddDbContext<AuthenticationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"))

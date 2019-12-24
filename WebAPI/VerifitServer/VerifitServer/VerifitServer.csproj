@@ -6,10 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\ConversationDetail\20191224050253_UpdateConversation.cs" />
+    <Compile Remove="Migrations\ConversationDetail\20191224050253_UpdateConversation.Designer.cs" />
+    <Compile Remove="Migrations\MessageDetail\20191224024417_InitMessageAddUsername.cs" />
+    <Compile Remove="Migrations\MessageDetail\20191224024417_InitMessageAddUsername.Designer.cs" />
+    <Compile Remove="Migrations\PhoneDetail\20191224042810_UpdateTimeLengthPhoneDetail.cs" />
+    <Compile Remove="Migrations\PhoneDetail\20191224042810_UpdateTimeLengthPhoneDetail.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    <PackageReference Include="SignalWire-DotNet" Version="2.3.0" />
   </ItemGroup>
 
 </Project>
