@@ -13,6 +13,8 @@ export class BronzePanelComponent implements OnInit {
 
   userDetails;
   selectedNumber = "Phone Number";
+  recipientPhone = "";
+  messageBody = "";
   constructor(private router:Router, private service:UserService, private conversation:ConversationComponent) { }
 
   getPhoneNumberList(string) {
@@ -84,16 +86,6 @@ export class BronzePanelComponent implements OnInit {
     );
   }
 
-  // getuserUSNumbers() {
-  //   this.service.getuserUSNumbers(this.userDetails.userName.toLowerCase()).subscribe(
-  //     res => {
-      
-  //     },
-  //     err => {
-  //       console.log(err);
-  //     }
-  //   );
-  // }
 
   callFn(phoneNumber) {
     console.log("Saving" + phoneNumber);
@@ -109,6 +101,33 @@ export class BronzePanelComponent implements OnInit {
     this.conversation.userSelectedConversation = conversation;
     localStorage.setItem("conversation", JSON.stringify(conversation));
     this.router.navigate(['/conversation']);
+  }
+
+  sendMessage() {
+    console.log(this.messageBody)
+    this.service.sendMessage(this.messageBody, this.selectedNumber, this.recipientPhone, this.userDetails.UserName).subscribe(
+      res => {
+        console.log("Return from new sendmessage");
+        console.log(res);
+        this.messageBody = "";
+        this.recipientPhone = "";
+        //let element = document.getElementById('exampleModal');
+        //element.className = "modal fade close";
+        this.service.updatePhoneConversations(this.userDetails.username, this.selectedNumber).subscribe(
+          res => {
+            console.log("return from new updatephoneconvo");
+            console.log(res);
+            this.service.conversations = res;
+          },
+          err => {
+
+          }
+        )
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   

@@ -17,6 +17,9 @@ export class HomeComponent implements OnInit {
     this.service.getUserProfile().subscribe(
       res => {
         this.userDetails = res;
+        var payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
+        this.userDetails.role = payLoad.role;
+        this.service.username = this.userDetails.UserName;
       },
       err => {
         console.log(err);

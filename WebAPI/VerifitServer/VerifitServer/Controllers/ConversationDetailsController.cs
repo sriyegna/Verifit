@@ -51,7 +51,7 @@ namespace VerifitServer.Controllers
         public async Task<ActionResult<IEnumerable<ConversationDetail>>> GetUserConversations(string username, string fromPhoneNumber)
         {
             var phoneNumber = "+" + fromPhoneNumber;
-            var conversationDetail = await _context.ConversationDetails.Where(a => (a.UserName == username && a.FromPhoneNumber == phoneNumber)).OrderByDescending(a => a.LastMessageTime).ToListAsync();
+            var conversationDetail = await _context.ConversationDetails.Where(a => (a.UserName == username && a.FromPhoneNumber == phoneNumber)).OrderByDescending(a => a.LastMessageTime).OrderByDescending(a => DateTime.Parse(a.LastMessageTime)).ToListAsync();
 
             if (conversationDetail == null)
             {

@@ -186,6 +186,99 @@ namespace VerifitServer.Controllers
         }
 
 
+        // Get Phone numbers for User
+        // GET: api/PhoneDetails
+        [HttpGet("UpdatePhoneConversations/{username}&{phone}")]
+        public async Task<ActionResult<IEnumerable<ConversationDetail>>> UpdatePhoneConversations(string username, string phone)
+        {
+            phone = "+" + phone;
+                       
+            //Update conversation tables
+            var messagelist = await _messageContext.MessageDetails.Where(a => ((a.FromPhoneNumber == phone) || (a.ToPhoneNumber == phone))).ToListAsync();
+            List<string> conversationNumbers = new List<string>();
+            foreach (var message in messagelist)
+            {
+                if (message.FromPhoneNumber == phone)
+                {
+                    conversationNumbers.Add(message.ToPhoneNumber);
+                }
+                else
+                {
+                    conversationNumbers.Add(message.FromPhoneNumber);
+                }
+            }
+
+            foreach (var conversationNumber in conversationNumbers)
+            {
+                var conversationDetail = await _conversationContext.ConversationDetails.FindAsync(username + phone + conversationNumber);
+                //If conversationDetail is NOT NULL, that means that we found a matching PKey, we need to UPDATE the record if the timestamp is newer. We can also set LastMessageTime to the current time of the found conversation.
+                //We cannot use the same Add function because the PKey already exists
+                if (conversationDetail == null)
+                {
+                    Debug.WriteLine("Looping ConversationNumber");
+                    var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
+                    ConversationDetail singleConversation = new ConversationDetail
+                    {
+                        ConversationId = username + phone + conversationNumber,
+                        UserName = username,
+                        FromPhoneNumber = phone,
+                        ToPhoneNumber = conversationNumber,
+                        LastMessage = "",
+                        LastMessageTime = "1/1/0001 12:00:00 AM"
+                    };
+                    foreach (var numberMessage in numberMessageList)
+                    {
+                        DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
+                        DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
+                        if (DateTime.Compare(lastMessageTime, numberMessageDate) < 0)
+                        {
+                            singleConversation.LastMessageTime = numberMessage.TimeCreated;
+                            singleConversation.LastMessage = numberMessage.Body;
+                        }
+                        Debug.WriteLine(numberMessage.TimeCreated);
+                    }
+                    _conversationContext.ConversationDetails.Add(singleConversation);
+                }
+                else
+                {
+                    Debug.Write("Updating Conversation Found");
+                    var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
+                    ConversationDetail singleConversation = new ConversationDetail
+                    {
+                        ConversationId = username + phone + conversationNumber,
+                        UserName = username,
+                        FromPhoneNumber = phone,
+                        ToPhoneNumber = conversationNumber,
+                        LastMessage = conversationDetail.LastMessage,
+                        LastMessageTime = conversationDetail.LastMessageTime
+                    };
+                    foreach (var numberMessage in numberMessageList)
+                    {
+                        DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
+                        DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
+                        if (DateTime.Compare(lastMessageTime, numberMessageDate) < 0)
+                        {
+                            singleConversation.LastMessageTime = numberMessage.TimeCreated;
+                            singleConversation.LastMessage = numberMessage.Body;
+                        }
+                        Debug.WriteLine(numberMessage.TimeCreated);
+                    }
+                    ConversationDetail conversationToUpdate = _conversationContext.ConversationDetails.Where(a => (a.ConversationId == username + phone + conversationNumber)).FirstOrDefault();
+                    if (conversationToUpdate != null)
+                    {
+                        conversationToUpdate.LastMessageTime = singleConversation.LastMessageTime;
+                        conversationToUpdate.LastMessage = singleConversation.LastMessage;
+                        //await _conversationContext.SaveChangesAsync();
+                    }
+                }
+            }
+            await _conversationContext.SaveChangesAsync();
+
+            var newResult = await _conversationContext.ConversationDetails.Where(a => ((a.UserName == username) && ((a.ToPhoneNumber == phone) || (a.FromPhoneNumber == phone)))).OrderByDescending(a => DateTime.Parse(a.LastMessageTime)).ToListAsync();
+            return newResult;
+        }
+
+
         // Update for Phone Number
         // GET: api/PhoneDetails
         [HttpGet("GetPhoneConversations/{username}&{phone}")]

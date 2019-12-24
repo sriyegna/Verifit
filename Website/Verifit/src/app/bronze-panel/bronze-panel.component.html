@@ -1,110 +1,138 @@
+<style>
+  /* Chat containers */
+  .container {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  
+  /* Darker chat container */
+  .darker {
+    border-color: #ccc;
+    background-color: #ddd;
+  }
+  
+  /* Clear floats */
+  .container::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  
+  /* Style images */
+  .container img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+  }
+  
+  /* Style the right image */
+  .container img.right {
+    float: right;
+    margin-left: 20px;
+    margin-right:0;
+  }
+  
+  /* Style time text */
+  .time-right {
+    float: right;
+    color: #aaa;
+  }
+  
+  /* Style time text */
+  .time-left {
+    float: left;
+    color: #999;
+  }
+
+  .avatar {
+    margin-top:auto;
+    margin-bottom:auto;
+  }
+  </style>
+
 <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand text-white">Verifit</a>
     <button class="btn btn-danger my-2 my-sm-0" (click)="onLogout()">Logout</button>
     <button class="btn btn-danger my-2 my-sm-0" routerLink='/home'>Home</button>
-    <button class="btn btn-danger my-2 my-sm-0" routerLink='/bronzepanel'>Bronze</button>
+    <button class="btn btn-danger my-2 my-sm-0" routerLink='/bronzepanel'>Phone</button>
 </nav>
 
-<div class="dropdown offset-2">
-   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-     {{selectedNumber}}
-   </button>
-   <div id="phone-number-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-     <div class="dropdown-item" href="#" *ngFor="let phone of service.userPhoneNumbers" (click)="callFn(phone.PhoneNumber)">{{phone.Country}} - {{phone.PhoneNumber}}</div>
-   </div>
+<div class="row">
+  <div class="offset-1 col-10">
+    <div class="row">
+      <div class="offset-2 col-2 my-3">
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{selectedNumber}}
+          </button>
+          <div id="phone-number-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <div class="dropdown-item" href="#" *ngFor="let phone of service.userPhoneNumbers" (click)="callFn(phone.PhoneNumber)">{{phone.Country}} - {{phone.PhoneNumber}}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-2 my-3">
+        <button class="btn btn-primary" (click)="requestUSNumber()">Get a US number!</button>
+      </div>
+
+      <div class="col-2 my-3">
+        <button class="btn btn-danger" (click)="requestCANumber()">Get a CA number!</button>
+      </div>
+
+      <div class="col-2 my-3">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+          New Conversation!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>      
+      <div class="modal-body">
+        <label for="basic-url">Recipient's Phone Number</label>
+        <div class="input-group mb-3">
+
+          <input type="text" class="form-control" placeholder="+12263364243" aria-label="Recipient's Phone Number" aria-describedby="basic-addon2" [(ngModel)]="recipientPhone">
+        </div>
+
+        <label for="basic-url">Message</label>
+        <div class="input-group">
+          <textarea class="form-control" aria-label="With textarea" [(ngModel)]="messageBody"></textarea>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" (click)="sendMessage()">Send message</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="card m-5" style="width:18rem" *ngIf="userDetails">
-    <ul class="list-group">
-        <li class="list-group-item">
-            <strong>
-                Role : 
-            </strong>
-            {{userDetails.role}}
-        </li>
-        <li class="list-group-item">
-            <strong>
-                Username : 
-            </strong>
-            {{userDetails.UserName}}
-        </li>
-        <li class="list-group-item">
-            <strong>
-                Full Name : 
-            </strong>
-            {{userDetails.FullName}}
-        </li>
-        <li class="list-group-item">
-            <strong>
-                Email : 
-            </strong>
-            {{userDetails.Email}}
-        </li>
-    </ul>
-</div>
 
-<button class="btn btn-primary" (click)="requestUSNumber()">Get a US number!</button>
-
-<button class="btn btn-danger" (click)="requestCANumber()">Get a CA number!</button>
-
-<button class="btn btn-success" (click)="newConversation()">New Conversation!</button>
-
-
-<style>
-    /* Chat containers */
-    .container {
-      border: 2px solid #dedede;
-      background-color: #f1f1f1;
-      border-radius: 5px;
-      padding: 10px;
-      margin: 10px 0;
-    }
+<div class="row">
+  <div class="col-md-10 mx-auto">
+    <div class="mx-auto container" *ngFor="let conversation of service.conversations"  (click)="clickConversation(conversation)">
+      <img class="avatar" src="/assets/img/avatar.png" alt="Avatar">
+      <span>{{conversation.ToPhoneNumber}}</span>
+      <br>
+      <span>{{conversation.LastMessage}}</span>
+      <span class="time-right">{{conversation.LastMessageTime}}</span>
+    </div>
     
-    /* Darker chat container */
-    .darker {
-      border-color: #ccc;
-      background-color: #ddd;
-    }
-    
-    /* Clear floats */
-    .container::after {
-      content: "";
-      clear: both;
-      display: table;
-    }
-    
-    /* Style images */
-    .container img {
-      float: left;
-      max-width: 60px;
-      width: 100%;
-      margin-right: 20px;
-      border-radius: 50%;
-    }
-    
-    /* Style the right image */
-    .container img.right {
-      float: right;
-      margin-left: 20px;
-      margin-right:0;
-    }
-    
-    /* Style time text */
-    .time-right {
-      float: right;
-      color: #aaa;
-    }
-    
-    /* Style time text */
-    .time-left {
-      float: left;
-      color: #999;
-    }
-    </style>
-
-<div class="container" *ngFor="let conversation of service.conversations"  (click)="clickConversation(conversation)">
-  <img src="/w3images/bandmember.jpg" alt="Avatar">
-  <span>{{conversation.ToPhoneNumber}}</span>
-  <p>{{conversation.LastMessage}}</p>
-  <span class="time-right">{{conversation.LastMessageTime}}</span>
+  </div>
 </div>

@@ -117,7 +117,7 @@ export class UserService {
   }
 
   getUsersConversations(username, number) {
-    number = number.substring(1, number.length)
+    number = number.substring(1, number.length);
     return this.http.get(this.BaseURI + '/ConversationDetails/GetUserConversations/' + username + "&" + number)
   }
 
@@ -137,6 +137,11 @@ export class UserService {
         }
       );
     }
+  }
+
+  updatePhoneConversations(username, selectedNumber) {
+    selectedNumber = selectedNumber.substring(1, selectedNumber.length);
+    return this.http.get(this.BaseURI + '/PhoneDetail/UpdatePhoneConversations/' + username + "&" + selectedNumber);
   }
 
   getUserConversationMessages(username, selectedNumber, toPhoneNumber) {
