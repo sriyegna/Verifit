@@ -5,13 +5,14 @@ import * as $ from "jquery";
 import { PhoneDetail } from './phone-detail.model';
 import { MessageDetail } from '../shared/message-detail.model';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private fb:FormBuilder, private http:HttpClient) { }
+  constructor(private fb:FormBuilder, private http:HttpClient, private router:Router) { }
   readonly BaseURI = 'http://localhost:50360/api';
   readonly NodeURI = 'http://localhost:1234';
 
@@ -57,6 +58,21 @@ export class UserService {
 
   login(formData) {
     return this.http.post(this.BaseURI + '/ApplicationUser/Login', formData);
+  }
+
+  onLogout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('conversation');
+    localStorage.removeItem('selectedNumber');
+    this.router.navigate(['/user/login']);
+  }
+
+  onLogin() {
+    this.router.navigate(['/user/login'])
+  }
+
+  onRegister() {
+    this.router.navigate(['/user/registration'])
   }
 
   getUserProfile() {

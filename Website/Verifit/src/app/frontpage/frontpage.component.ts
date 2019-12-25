@@ -27,15 +27,4 @@ export class FrontpageComponent implements OnInit {
     );
   }
 
-  onLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('conversation');
-    localStorage.removeItem('selectedNumber');
-    this.router.navigate(['/user/login']);
-  }
-
-  onLogin() {
-    this.router.navigate(['/user/login'])
-  }
-
 }

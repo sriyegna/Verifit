@@ -39,15 +39,10 @@ export class ConversationComponent implements OnInit {
 
         this.service.getConversationMessages(this.userDetails.UserName, conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
           res => {
-            console.log("output of getconversationmessages");
-            console.log(res);
 
             this.service.getUserConversationMessages(this.userDetails.UserName, conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
               res => {
-                console.log("Output message details");
-                console.log(res);
                 this.messageList = res;
-                //this.router.navigateByUrl("#endOfMessages");
                 this.scrollTo();
                 
               },
@@ -84,7 +79,6 @@ export class ConversationComponent implements OnInit {
             console.log(res);
             this.messageList = res;
             this.messageBody = "";
-            //this.router.navigateByUrl("#endOfMessages");
             this.scrollTo();
           },
           err => {
@@ -99,8 +93,6 @@ export class ConversationComponent implements OnInit {
   }
 
   classDirection(message) {
-    //console.log("Class Direction");
-    //console.log(message);
     if (message.Direction == 'inbound') {
       return 'darker';
     }
@@ -113,12 +105,5 @@ export class ConversationComponent implements OnInit {
       scrollTarget: "#sendDiv",
       duration: 200
     });
-  }
-
-  onLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('conversation');
-    localStorage.removeItem('selectedNumber');
-    this.router.navigate(['/user/login']);
   }
 }
