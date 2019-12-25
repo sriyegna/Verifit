@@ -1,8 +1,10 @@
 <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand text-white">Verifit</a>
-    <button class="btn btn-danger my-2 my-sm-0" (click)="onLogout()">Logout</button>
-    <button class="btn btn-danger my-2 my-sm-0" routerLink='/adminpanel'>Admin</button>
-    <button class="btn btn-danger my-2 my-sm-0" routerLink='/bronzepanel'>Phone</button>
+    <a class="navbar-brand text-white" routerLink="/front">Verifit</a>
+    <div class="float-right">
+        <button class="btn btn-danger my-2 mx-3 my-sm-0" (click)="onLogout()">Logout</button>
+        <button class="btn btn-danger my-2 mx-3 my-sm-0" routerLink='/adminpanel'>Admin</button>
+        <button class="btn btn-danger my-2 mx-3 my-sm-0" routerLink='/bronzepanel'>Phone</button>
+    </div>
 </nav>
 <div class="row">
     <div class="col-3">

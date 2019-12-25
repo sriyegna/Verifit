@@ -19,6 +19,9 @@ namespace PhoneAPI.Models
         [Column(TypeName = ("nvarchar(256)"))]
         [Required]
         public string UserName { get; set; }
+        [Column(TypeName = ("nvarchar(256)"))]
+        [Required]
+        public string ConversationName { get; set; }
         [Column(TypeName =("nvarchar(20)"))]
         [Required]
         public string FromPhoneNumber { get; set; }

@@ -20,6 +20,7 @@ import { SilverPanelComponent } from './silver-panel/silver-panel.component';
 import { GoldPanelComponent } from './gold-panel/gold-panel.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { ConversationComponent } from './conversation/conversation.component';
+import { FrontpageComponent } from './frontpage/frontpage.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ConversationComponent } from './conversation/conversation.component';
     SilverPanelComponent,
     GoldPanelComponent,
     ForbiddenComponent,
-    ConversationComponent
+    ConversationComponent,
+    FrontpageComponent
   ],
   imports: [
     BrowserModule,

@@ -1,8 +1,10 @@
 <nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand text-white">Verifit</a>
-    <button class="btn btn-danger my-2 my-sm-0" (click)="onLogout()">Logout</button>
-    <button class="btn btn-danger my-2 my-sm-0" routerLink='/home'>Home</button>
-    <button class="btn btn-danger my-2 my-sm-0" routerLink='/bronzepanel'>Bronze</button>
+    <a class="navbar-brand text-white" routerLink="/front">Verifit</a>
+    <div class="float-right">
+      <button class="btn btn-danger my-2 mx-3 my-sm-0" (click)="onLogout()">Logout</button>
+      <button class="btn btn-danger my-2 mx-3 my-sm-0" routerLink='/adminpanel'>Admin</button>
+      <button class="btn btn-danger my-2 mx-3 my-sm-0" routerLink='/bronzepanel'>Phone</button>
+    </div>
 </nav>
 
 <style>
@@ -57,12 +59,21 @@
       float: left;
       color: #999;
     }
-    </style>
 
-<div class="container" *ngFor="let message of messageList" [ngClass]="classDirection(message)">
-  <img src="/assets/img/avatar.png" alt="Avatar">
-  <p>{{message.Body}}</p>
-  <span class="time-right">{{message.TimeCreated}}</span>
+    .height400px {
+      height: 90vh;
+      overflow: auto;
+    }
+    </style>
+<div class="height400px">
+  <div>
+    <div class="container" *ngFor="let message of messageList" [ngClass]="classDirection(message)">
+      <img src="/assets/img/avatar.png" alt="Avatar">
+      <p>{{message.Body}}</p>
+      <span class="time-right">{{message.TimeCreated}}</span>
+    </div>
+  </div>
+  <div id="endOfMessages"></div>
 </div>
 
 <div class="input-group mb-3">

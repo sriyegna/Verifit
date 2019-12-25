@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-conversation',
@@ -13,7 +14,7 @@ export class ConversationComponent implements OnInit {
   userDetails;
   messageBody: string = '';
 
-  constructor(private service:UserService) { }
+  constructor(private service:UserService, private router:Router) { }
 
   ngOnInit() {
     this.service.getUserProfile().subscribe(
@@ -35,6 +36,7 @@ export class ConversationComponent implements OnInit {
                 console.log("Output message details");
                 console.log(res);
                 this.messageList = res;
+                //this.router.navigateByUrl("#endOfMessages");
               },
               err => {
                 console.log(err);
@@ -69,6 +71,7 @@ export class ConversationComponent implements OnInit {
             console.log(res);
             this.messageList = res;
             this.messageBody = "";
+            //this.router.navigateByUrl("#endOfMessages");
           },
           err => {
             console.log(err);

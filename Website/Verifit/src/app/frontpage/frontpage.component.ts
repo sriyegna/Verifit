@@ -3,11 +3,11 @@ import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
+  selector: 'app-frontpage',
+  templateUrl: './frontpage.component.html',
   styles: []
 })
-export class HomeComponent implements OnInit {
+export class FrontpageComponent implements OnInit {
 
   userDetails;
 
@@ -33,4 +33,9 @@ export class HomeComponent implements OnInit {
     localStorage.removeItem('selectedNumber');
     this.router.navigate(['/user/login']);
   }
+
+  onLogin() {
+    this.router.navigate(['/user/login'])
+  }
+
 }

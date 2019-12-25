@@ -11,10 +11,12 @@ import { BronzePanelComponent } from './bronze-panel/bronze-panel.component';
 import { GoldPanelComponent } from './gold-panel/gold-panel.component';
 import { SilverPanelComponent } from './silver-panel/silver-panel.component';
 import { ConversationComponent } from './conversation/conversation.component';
+import { FrontpageComponent } from './frontpage/frontpage.component';
 
 
 const routes: Routes = [
-  {path:'', redirectTo:'/user/login', pathMatch:'full'},
+  {path:'', redirectTo:'/front', pathMatch:'full'},
+  {path:'front', component:FrontpageComponent},
   {path:'user', component:UserComponent, 
     children: [
       {path:'registration', component:RegistrationComponent}, // /user/register

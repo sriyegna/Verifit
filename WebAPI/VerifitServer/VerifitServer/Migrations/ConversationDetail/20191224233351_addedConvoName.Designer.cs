@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhoneAPI.Models;
 
 namespace VerifitServer.Migrations.ConversationDetail
 {
     [DbContext(typeof(ConversationDetailContext))]
-    partial class ConversationDetailContextModelSnapshot : ModelSnapshot
+    [Migration("20191224233351_addedConvoName")]
+    partial class addedConvoName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
