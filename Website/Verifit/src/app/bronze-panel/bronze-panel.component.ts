@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../shared/user.service';
 import { PhoneDetail } from '../shared/phone-detail.model';
 import { ConversationComponent } from '../conversation/conversation.component';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-bronze-panel',
@@ -46,6 +47,8 @@ export class BronzePanelComponent implements OnInit {
         var payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
         this.userDetails.role = payLoad.role;
         this.service.username = this.userDetails.UserName;
+        this.service.userDetails = this.userDetails;
+
         this.getPhoneNumberList("init");
 
         if (localStorage.getItem("selectedNumber") != null) {

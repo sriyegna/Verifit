@@ -24,6 +24,7 @@ import { GoldPanelComponent } from './gold-panel/gold-panel.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { ConversationComponent } from './conversation/conversation.component';
 import { FrontpageComponent } from './frontpage/frontpage.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { FrontpageComponent } from './frontpage/frontpage.component';
     GoldPanelComponent,
     ForbiddenComponent,
     ConversationComponent,
-    FrontpageComponent
+    FrontpageComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +61,9 @@ import { FrontpageComponent } from './frontpage/frontpage.component';
     useClass: AuthInterceptor,
     multi: true
   },
-  ConversationComponent],
+  ConversationComponent,
+  NavbarComponent
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -6,6 +6,7 @@ import { PhoneDetail } from './phone-detail.model';
 import { MessageDetail } from '../shared/message-detail.model';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { Router } from '@angular/router';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class UserService {
   username = "";
   userPhoneNumbers;
   userSelectedConversation;
+  userDetails;
 
   formModel = this.fb.group({
     UserName : ['', Validators.required],

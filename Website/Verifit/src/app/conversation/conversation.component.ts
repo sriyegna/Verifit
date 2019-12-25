@@ -3,6 +3,7 @@ import { UserService } from '../shared/user.service';
 import { Router } from '@angular/router';
 import { PageScrollService, PageScrollInstance, EasingLogic } from 'ngx-page-scroll-core';
 import { DOCUMENT } from '@angular/common';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-conversation',
@@ -19,8 +20,7 @@ export class ConversationComponent implements OnInit {
   userDetails;
   messageBody: string = '';
 
-  constructor(private service:UserService, private router:Router, private pageScrollService: PageScrollService, @Inject(DOCUMENT) 
-  private document: any) { }
+  constructor(private service:UserService, private router:Router, private pageScrollService: PageScrollService, @Inject(DOCUMENT) private document: any) { }
 
   private delay(ms: number)
   {
@@ -34,30 +34,26 @@ export class ConversationComponent implements OnInit {
         var payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
         this.userDetails.role = payLoad.role;
         this.service.username = this.userDetails.UserName;
+        this.service.userDetails = this.userDetails;
 
         var conversation = JSON.parse(localStorage.getItem("conversation"));
 
         this.service.getConversationMessages(this.userDetails.UserName, conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
           res => {
-
             this.service.getUserConversationMessages(this.userDetails.UserName, conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
               res => {
                 this.messageList = res;
                 this.scrollTo();
-                
               },
               err => {
                 console.log(err);
               }
             );
-
-
           },
           err => {
             console.log(err);
           }
-        )
-
+        );
       },
       err => {
         console.log(err);
