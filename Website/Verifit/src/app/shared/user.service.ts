@@ -118,7 +118,8 @@ export class UserService {
 
   getUsersConversations(username, number) {
     number = number.substring(1, number.length);
-    return this.http.get(this.BaseURI + '/ConversationDetails/GetUserConversations/' + username + "&" + number)
+    //return this.http.get(this.BaseURI + '/ConversationDetails/GetUserConversations/' + username + "&" + number)
+    return this.http.get(this.BaseURI + '/PhoneDetail/UpdatePhoneConversations/' + username + "&" + number)
   }
 
   populateConversations(username) {

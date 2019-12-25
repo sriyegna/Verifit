@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { Router } from '@angular/router';
+import { PageScrollService, PageScrollInstance, EasingLogic } from 'ngx-page-scroll-core';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-conversation',
@@ -9,12 +11,21 @@ import { Router } from '@angular/router';
 })
 export class ConversationComponent implements OnInit {
 
+  @ViewChild('basicContainer', {static: false})
+  public basicContainer: ElementRef;
+  
   messageList;
   userSelectedConversation;
   userDetails;
   messageBody: string = '';
 
-  constructor(private service:UserService, private router:Router) { }
+  constructor(private service:UserService, private router:Router, private pageScrollService: PageScrollService, @Inject(DOCUMENT) 
+  private document: any) { }
+
+  private delay(ms: number)
+  {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   ngOnInit() {
     this.service.getUserProfile().subscribe(
@@ -37,6 +48,8 @@ export class ConversationComponent implements OnInit {
                 console.log(res);
                 this.messageList = res;
                 //this.router.navigateByUrl("#endOfMessages");
+                this.scrollTo();
+                
               },
               err => {
                 console.log(err);
@@ -72,6 +85,7 @@ export class ConversationComponent implements OnInit {
             this.messageList = res;
             this.messageBody = "";
             //this.router.navigateByUrl("#endOfMessages");
+            this.scrollTo();
           },
           err => {
             console.log(err);
@@ -92,4 +106,19 @@ export class ConversationComponent implements OnInit {
     }
   }
 
+  private async scrollTo() {
+    await this.delay(500);
+    this.pageScrollService.scroll({
+      document: this.document,
+      scrollTarget: "#sendDiv",
+      duration: 200
+    });
+  }
+
+  onLogout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('conversation');
+    localStorage.removeItem('selectedNumber');
+    this.router.navigate(['/user/login']);
+  }
 }

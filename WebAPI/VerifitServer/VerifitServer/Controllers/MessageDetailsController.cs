@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -115,6 +116,7 @@ namespace VerifitServer.Controllers
             //Get Signalwire number
             TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
 
+            //Create and send outgoing message
             var message = MessageResource.Create(
                 from: new Twilio.Types.PhoneNumber(messageDetail.FromPhoneNumber),
                 body: messageDetail.Body,
@@ -127,7 +129,65 @@ namespace VerifitServer.Controllers
             messageDetail.Direction = (message.Direction).ToString();
                        
             _context.MessageDetails.Add(messageDetail);
+
+            //Get new messages
+            var messagesFrom = MessageResource.Read(
+                    from: new Twilio.Types.PhoneNumber(messageDetail.ToPhoneNumber)
+                    );
+            var messagesTo = MessageResource.Read(
+            to: new Twilio.Types.PhoneNumber(messageDetail.ToPhoneNumber)
+            );
+
+            Debug.WriteLine("From");
+            foreach (var record in messagesFrom)
+            {
+                Console.WriteLine(record.Sid);
+                Debug.WriteLine("Debug code1");
+                Debug.WriteLine(record.Sid);
+                var mDetail = await _context.MessageDetails.FindAsync(record.Sid);
+                if (mDetail == null)
+                {
+                    MessageDetail singleMessage = new MessageDetail
+                    {
+                        UserName = messageDetail.UserName,
+                        MessageSid = record.Sid,
+                        Body = record.Body,
+                        TimeCreated = (record.DateCreated).ToString(),
+                        TimeSent = (record.DateSent).ToString(),
+                        Direction = (record.Direction).ToString(),
+                        FromPhoneNumber = (record.From).ToString(),
+                        ToPhoneNumber = (record.To).ToString()
+                    };
+                    _context.MessageDetails.Add(singleMessage);
+                }
+
+            }
+            Debug.WriteLine("To");
+            foreach (var record in messagesTo)
+            {
+                Console.WriteLine(record.Sid);
+                Debug.WriteLine("Debug code2");
+                Debug.WriteLine(record.Sid);
+                var mDetail = await _context.MessageDetails.FindAsync(record.Sid);
+                if (messageDetail == null)
+                {
+                    MessageDetail singleMessage = new MessageDetail
+                    {
+                        UserName = messageDetail.UserName,
+                        MessageSid = record.Sid,
+                        Body = record.Body,
+                        TimeCreated = (record.DateCreated).ToString(),
+                        TimeSent = (record.DateSent).ToString(),
+                        Direction = (record.Direction).ToString(),
+                        FromPhoneNumber = (record.From).ToString(),
+                        ToPhoneNumber = (record.To).ToString()
+                    };
+                    _context.MessageDetails.Add(singleMessage);
+                }
+            }
             await _context.SaveChangesAsync();
+
+
 
             return CreatedAtAction("GetMessageDetail", new { id = messageDetail.MessageSid }, messageDetail);
         }

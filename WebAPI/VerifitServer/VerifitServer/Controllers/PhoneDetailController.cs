@@ -30,175 +30,74 @@ namespace VerifitServer.Controllers
             _conversationContext = conversationContext;
         }
 
-
-        // Get Phone numbers for User
-        // GET: api/PhoneDetails
-        [HttpGet("GetUserPhoneNumbers/{username}")]
-        public async Task<ActionResult<IEnumerable<PhoneDetail>>> GetUserPhoneNumbers(string username)
+        public async Task getMessages(string username, string phoneNumber)
         {
-            Console.WriteLine(username);
-            var newResult = await _context.PhoneDetails.Where(a => (a.UserName == username)).ToListAsync();
-
-            //Update messages for all user phone numbers
-            foreach (var result in newResult)
-            {
-                Debug.WriteLine(result.PhoneNumber);
-
-                TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
-                var messagesFrom = MessageResource.Read(
-                    from: new Twilio.Types.PhoneNumber(result.PhoneNumber)
-                    );
-                var messagesTo = MessageResource.Read(
-                to: new Twilio.Types.PhoneNumber(result.PhoneNumber)
+            TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
+            var messagesFrom = MessageResource.Read(
+                from: new Twilio.Types.PhoneNumber(phoneNumber)
                 );
+            var messagesTo = MessageResource.Read(
+            to: new Twilio.Types.PhoneNumber(phoneNumber)
+            );
 
-                Debug.WriteLine("From");
-                foreach (var record in messagesFrom)
+            Debug.WriteLine("From");
+            foreach (var record in messagesFrom)
+            {
+                Console.WriteLine(record.Sid);
+                Debug.WriteLine("Debug code1");
+                Debug.WriteLine(record.Sid);
+                var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
+                if (messageDetail == null)
                 {
-                    Console.WriteLine(record.Sid);
-                    Debug.WriteLine("Debug code1");
-                    Debug.WriteLine(record.Sid);
-                    var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
-                    if (messageDetail == null)
+                    MessageDetail singleMessage = new MessageDetail
                     {
-                        MessageDetail singleMessage = new MessageDetail
-                        {
-                            UserName = username,
-                            MessageSid = record.Sid,
-                            Body = record.Body,
-                            TimeCreated = (record.DateCreated).ToString(),
-                            TimeSent = (record.DateSent).ToString(),
-                            Direction = (record.Direction).ToString(),
-                            FromPhoneNumber = (record.From).ToString(),
-                            ToPhoneNumber = (record.To).ToString()
-                        };
-                        _messageContext.MessageDetails.Add(singleMessage);
-                    }
-
-                }
-                Debug.WriteLine("To");
-                foreach (var record in messagesTo)
-                {
-                    Console.WriteLine(record.Sid);
-                    Debug.WriteLine("Debug code2");
-                    Debug.WriteLine(record.Sid);
-                    var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
-                    if (messageDetail == null)
-                    {
-                        MessageDetail singleMessage = new MessageDetail
-                        {
-                            UserName = username,
-                            MessageSid = record.Sid,
-                            Body = record.Body,
-                            TimeCreated = (record.DateCreated).ToString(),
-                            TimeSent = (record.DateSent).ToString(),
-                            Direction = (record.Direction).ToString(),
-                            FromPhoneNumber = (record.From).ToString(),
-                            ToPhoneNumber = (record.To).ToString()
-                        };
-                        _messageContext.MessageDetails.Add(singleMessage);
-                    }
-                }
-                await _messageContext.SaveChangesAsync();
-
-                //Update conversation tables
-                var messagelist = await _messageContext.MessageDetails.Where(a => ((a.FromPhoneNumber == result.PhoneNumber) || (a.ToPhoneNumber == result.PhoneNumber))).ToListAsync();
-                List<string> conversationNumbers = new List<string>();
-                foreach (var message in messagelist)
-                {
-                    if (message.FromPhoneNumber == result.PhoneNumber)
-                    {
-                        conversationNumbers.Add(message.ToPhoneNumber);
-                    }
-                    else
-                    {
-                        conversationNumbers.Add(message.FromPhoneNumber);
-                    }
+                        UserName = username,
+                        MessageSid = record.Sid,
+                        Body = record.Body,
+                        TimeCreated = (record.DateCreated).ToString(),
+                        TimeSent = (record.DateSent).ToString(),
+                        Direction = (record.Direction).ToString(),
+                        FromPhoneNumber = (record.From).ToString(),
+                        ToPhoneNumber = (record.To).ToString()
+                    };
+                    _messageContext.MessageDetails.Add(singleMessage);
                 }
 
-                foreach (var conversationNumber in conversationNumbers)
+            }
+            Debug.WriteLine("To");
+            foreach (var record in messagesTo)
+            {
+                Console.WriteLine(record.Sid);
+                Debug.WriteLine("Debug code2");
+                Debug.WriteLine(record.Sid);
+                var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
+                if (messageDetail == null)
                 {
-                    var conversationDetail = await _conversationContext.ConversationDetails.FindAsync(username + result.PhoneNumber + conversationNumber);
-                    //If conversationDetail is NOT NULL, that means that we found a matching PKey, we need to UPDATE the record if the timestamp is newer. We can also set LastMessageTime to the current time of the found conversation.
-                    //We cannot use the same Add function because the PKey already exists
-                    if (conversationDetail == null)
+                    MessageDetail singleMessage = new MessageDetail
                     {
-                        Debug.WriteLine("Looping ConversationNumber");
-                        var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
-                        ConversationDetail singleConversation = new ConversationDetail
-                        {
-                            ConversationId = username + result.PhoneNumber + conversationNumber,
-                            UserName = username,
-                            FromPhoneNumber = result.PhoneNumber,
-                            ToPhoneNumber = conversationNumber,
-                            LastMessage = "",
-                            LastMessageTime = "1/1/0001 12:00:00 AM"
-                        };
-                        foreach (var numberMessage in numberMessageList)
-                        {
-                            DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
-                            DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
-                            if (DateTime.Compare(lastMessageTime, numberMessageDate) < 0)
-                            {
-                                singleConversation.LastMessageTime = numberMessage.TimeCreated;
-                                singleConversation.LastMessage = numberMessage.Body;
-                            }
-                            Debug.WriteLine(numberMessage.TimeCreated);
-                        }
-                        _conversationContext.ConversationDetails.Add(singleConversation);
-                    }
-                    else
-                    {
-                        Debug.Write("Updating Conversation Found");
-                        var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
-                        ConversationDetail singleConversation = new ConversationDetail
-                        {
-                            ConversationId = username + result.PhoneNumber + conversationNumber,
-                            UserName = username,
-                            FromPhoneNumber = result.PhoneNumber,
-                            ToPhoneNumber = conversationNumber,
-                            LastMessage = conversationDetail.LastMessage,
-                            LastMessageTime = conversationDetail.LastMessageTime
-                        };
-                        foreach (var numberMessage in numberMessageList)
-                        {
-                            DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
-                            DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
-                            if (DateTime.Compare(lastMessageTime, numberMessageDate) < 0)
-                            {
-                                singleConversation.LastMessageTime = numberMessage.TimeCreated;
-                                singleConversation.LastMessage = numberMessage.Body;
-                            }
-                            Debug.WriteLine(numberMessage.TimeCreated);
-                        }
-                        ConversationDetail conversationToUpdate = _conversationContext.ConversationDetails.Where(a => (a.ConversationId == username + result.PhoneNumber + conversationNumber)).FirstOrDefault();
-                        if (conversationToUpdate != null) {
-                            conversationToUpdate.LastMessageTime = singleConversation.LastMessageTime;
-                            conversationToUpdate.LastMessage = singleConversation.LastMessage;
-                            //await _conversationContext.SaveChangesAsync();
-                        }
-
-                    }
+                        UserName = username,
+                        MessageSid = record.Sid,
+                        Body = record.Body,
+                        TimeCreated = (record.DateCreated).ToString(),
+                        TimeSent = (record.DateSent).ToString(),
+                        Direction = (record.Direction).ToString(),
+                        FromPhoneNumber = (record.From).ToString(),
+                        ToPhoneNumber = (record.To).ToString()
+                    };
+                    _messageContext.MessageDetails.Add(singleMessage);
                 }
-                await _conversationContext.SaveChangesAsync();
-            }           
-            return newResult;
+            }
+            await _messageContext.SaveChangesAsync();
         }
 
-
-        // Get Phone numbers for User
-        // GET: api/PhoneDetails
-        [HttpGet("UpdatePhoneConversations/{username}&{phone}")]
-        public async Task<ActionResult<IEnumerable<ConversationDetail>>> UpdatePhoneConversations(string username, string phone)
+        public async Task updateConversationTables(string username, string phoneNumber)
         {
-            phone = "+" + phone;
-                       
             //Update conversation tables
-            var messagelist = await _messageContext.MessageDetails.Where(a => ((a.FromPhoneNumber == phone) || (a.ToPhoneNumber == phone))).ToListAsync();
+            var messagelist = await _messageContext.MessageDetails.Where(a => ((a.FromPhoneNumber == phoneNumber) || (a.ToPhoneNumber == phoneNumber))).ToListAsync();
             List<string> conversationNumbers = new List<string>();
             foreach (var message in messagelist)
             {
-                if (message.FromPhoneNumber == phone)
+                if (message.FromPhoneNumber == phoneNumber)
                 {
                     conversationNumbers.Add(message.ToPhoneNumber);
                 }
@@ -210,7 +109,7 @@ namespace VerifitServer.Controllers
 
             foreach (var conversationNumber in conversationNumbers)
             {
-                var conversationDetail = await _conversationContext.ConversationDetails.FindAsync(username + phone + conversationNumber);
+                var conversationDetail = await _conversationContext.ConversationDetails.FindAsync(username + phoneNumber + conversationNumber);
                 //If conversationDetail is NOT NULL, that means that we found a matching PKey, we need to UPDATE the record if the timestamp is newer. We can also set LastMessageTime to the current time of the found conversation.
                 //We cannot use the same Add function because the PKey already exists
                 if (conversationDetail == null)
@@ -219,12 +118,13 @@ namespace VerifitServer.Controllers
                     var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
                     ConversationDetail singleConversation = new ConversationDetail
                     {
-                        ConversationId = username + phone + conversationNumber,
+                        ConversationId = username + phoneNumber + conversationNumber,
                         UserName = username,
-                        FromPhoneNumber = phone,
+                        FromPhoneNumber = phoneNumber,
                         ToPhoneNumber = conversationNumber,
                         LastMessage = "",
-                        LastMessageTime = "1/1/0001 12:00:00 AM"
+                        LastMessageTime = "1/1/0001 12:00:00 AM",
+                        ConversationName = ""
                     };
                     foreach (var numberMessage in numberMessageList)
                     {
@@ -245,12 +145,13 @@ namespace VerifitServer.Controllers
                     var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
                     ConversationDetail singleConversation = new ConversationDetail
                     {
-                        ConversationId = username + phone + conversationNumber,
+                        ConversationId = username + phoneNumber + conversationNumber,
                         UserName = username,
-                        FromPhoneNumber = phone,
+                        FromPhoneNumber = phoneNumber,
                         ToPhoneNumber = conversationNumber,
                         LastMessage = conversationDetail.LastMessage,
-                        LastMessageTime = conversationDetail.LastMessageTime
+                        LastMessageTime = conversationDetail.LastMessageTime,
+                        ConversationName = ""
                     };
                     foreach (var numberMessage in numberMessageList)
                     {
@@ -263,16 +164,49 @@ namespace VerifitServer.Controllers
                         }
                         Debug.WriteLine(numberMessage.TimeCreated);
                     }
-                    ConversationDetail conversationToUpdate = _conversationContext.ConversationDetails.Where(a => (a.ConversationId == username + phone + conversationNumber)).FirstOrDefault();
+                    ConversationDetail conversationToUpdate = _conversationContext.ConversationDetails.Where(a => (a.ConversationId == username + phoneNumber + conversationNumber)).FirstOrDefault();
                     if (conversationToUpdate != null)
                     {
                         conversationToUpdate.LastMessageTime = singleConversation.LastMessageTime;
                         conversationToUpdate.LastMessage = singleConversation.LastMessage;
                         //await _conversationContext.SaveChangesAsync();
                     }
+
                 }
             }
             await _conversationContext.SaveChangesAsync();
+        }
+
+        // Get Phone numbers for User
+        // GET: api/PhoneDetails
+        [HttpGet("GetUserPhoneNumbers/{username}")]
+        public async Task<ActionResult<IEnumerable<PhoneDetail>>> GetUserPhoneNumbers(string username)
+        {
+            Console.WriteLine(username);
+            var newResult = await _context.PhoneDetails.Where(a => (a.UserName == username)).ToListAsync();
+
+            //Update messages for all user phone numbers
+            foreach (var result in newResult)
+            {
+                Debug.WriteLine(result.PhoneNumber);
+
+                await getMessages(username, result.PhoneNumber);
+
+                await updateConversationTables(username, result.PhoneNumber);
+                
+            }           
+            return newResult;
+        }
+
+
+        // Get Phone numbers for User
+        // GET: api/PhoneDetails
+        [HttpGet("UpdatePhoneConversations/{username}&{phone}")]
+        public async Task<ActionResult<IEnumerable<ConversationDetail>>> UpdatePhoneConversations(string username, string phone)
+        {
+            phone = "+" + phone;
+
+            await updateConversationTables(username, phone);
 
             var newResult = await _conversationContext.ConversationDetails.Where(a => ((a.UserName == username) && ((a.ToPhoneNumber == phone) || (a.FromPhoneNumber == phone)))).OrderByDescending(a => DateTime.Parse(a.LastMessageTime)).ToListAsync();
             return newResult;
@@ -288,143 +222,10 @@ namespace VerifitServer.Controllers
             phone = "+" + phone;
             PhoneDetail newResult = _context.PhoneDetails.Where(a => (a.PhoneNumber == phone)).FirstOrDefault();
 
-            TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
-            var messagesFrom = MessageResource.Read(
-                from: new Twilio.Types.PhoneNumber(phone)
-                );
-            var messagesTo = MessageResource.Read(
-            to: new Twilio.Types.PhoneNumber(phone)
-            );
+            await getMessages(username, phone);
 
-            Debug.WriteLine("From");
-            foreach (var record in messagesFrom)
-            {
-                Console.WriteLine(record.Sid);
-                Debug.WriteLine("Debug code1");
-                Debug.WriteLine(record.Sid);
-                var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
-                if (messageDetail == null)
-                {
-                    MessageDetail singleMessage = new MessageDetail
-                    {
-                        UserName = username,
-                        MessageSid = record.Sid,
-                        Body = record.Body,
-                        TimeCreated = (record.DateCreated).ToString(),
-                        TimeSent = (record.DateSent).ToString(),
-                        Direction = (record.Direction).ToString(),
-                        FromPhoneNumber = (record.From).ToString(),
-                        ToPhoneNumber = (record.To).ToString()
-                    };
-                    _messageContext.MessageDetails.Add(singleMessage);
-                }
+            await updateConversationTables(username, phone);
 
-            }
-            Debug.WriteLine("To");
-            foreach (var record in messagesTo)
-            {
-                Console.WriteLine(record.Sid);
-                Debug.WriteLine("Debug code2");
-                Debug.WriteLine(record.Sid);
-                var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
-                if (messageDetail == null)
-                {
-                    MessageDetail singleMessage = new MessageDetail
-                    {
-                        UserName = username,
-                        MessageSid = record.Sid,
-                        Body = record.Body,
-                        TimeCreated = (record.DateCreated).ToString(),
-                        TimeSent = (record.DateSent).ToString(),
-                        Direction = (record.Direction).ToString(),
-                        FromPhoneNumber = (record.From).ToString(),
-                        ToPhoneNumber = (record.To).ToString()
-                    };
-                    _messageContext.MessageDetails.Add(singleMessage);
-                }
-            }
-            await _messageContext.SaveChangesAsync();
-
-            //Update conversation tables
-            var messagelist = await _messageContext.MessageDetails.Where(a => ((a.FromPhoneNumber == phone) || (a.ToPhoneNumber == phone))).ToListAsync();
-            List<string> conversationNumbers = new List<string>();
-            foreach (var message in messagelist)
-            {
-                if (message.FromPhoneNumber == phone)
-                {
-                    conversationNumbers.Add(message.ToPhoneNumber);
-                }
-                else
-                {
-                    conversationNumbers.Add(message.FromPhoneNumber);
-                }
-            }
-
-            foreach (var conversationNumber in conversationNumbers)
-            {
-                var conversationDetail = await _conversationContext.ConversationDetails.FindAsync(username + phone + conversationNumber);
-                //If conversationDetail is NOT NULL, that means that we found a matching PKey, we need to UPDATE the record if the timestamp is newer. We can also set LastMessageTime to the current time of the found conversation.
-                //We cannot use the same Add function because the PKey already exists
-                if (conversationDetail == null)
-                {
-                    Debug.WriteLine("Looping ConversationNumber");
-                    var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
-                    ConversationDetail singleConversation = new ConversationDetail
-                    {
-                        ConversationId = username + phone + conversationNumber,
-                        UserName = username,
-                        FromPhoneNumber = phone,
-                        ToPhoneNumber = conversationNumber,
-                        LastMessage = "",
-                        LastMessageTime = "1/1/0001 12:00:00 AM"
-                    };
-                    foreach (var numberMessage in numberMessageList)
-                    {
-                        DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
-                        DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
-                        if (DateTime.Compare(lastMessageTime, numberMessageDate) < 0)
-                        {
-                            singleConversation.LastMessageTime = numberMessage.TimeCreated;
-                            singleConversation.LastMessage = numberMessage.Body;
-                        }
-                        Debug.WriteLine(numberMessage.TimeCreated);
-                    }
-                    _conversationContext.ConversationDetails.Add(singleConversation);
-                }
-                else
-                {
-                    Debug.Write("Updating Conversation Found");
-                    var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
-                    ConversationDetail singleConversation = new ConversationDetail
-                    {
-                        ConversationId = username + phone + conversationNumber,
-                        UserName = username,
-                        FromPhoneNumber = phone,
-                        ToPhoneNumber = conversationNumber,
-                        LastMessage = conversationDetail.LastMessage,
-                        LastMessageTime = conversationDetail.LastMessageTime
-                    };
-                    foreach (var numberMessage in numberMessageList)
-                    {
-                        DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
-                        DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
-                        if (DateTime.Compare(lastMessageTime, numberMessageDate) < 0)
-                        {
-                            singleConversation.LastMessageTime = numberMessage.TimeCreated;
-                            singleConversation.LastMessage = numberMessage.Body;
-                        }
-                        Debug.WriteLine(numberMessage.TimeCreated);
-                    }
-                    ConversationDetail conversationToUpdate = _conversationContext.ConversationDetails.Where(a => (a.ConversationId == username + phone + conversationNumber)).FirstOrDefault();
-                    if (conversationToUpdate != null)
-                    {
-                        conversationToUpdate.LastMessageTime = singleConversation.LastMessageTime;
-                        conversationToUpdate.LastMessage = singleConversation.LastMessage;
-                        //await _conversationContext.SaveChangesAsync();
-                    }
-                }
-            }
-            await _conversationContext.SaveChangesAsync();
             return newResult;
         }
 
@@ -439,64 +240,8 @@ namespace VerifitServer.Controllers
 
             ConversationDetail newResult = _conversationContext.ConversationDetails.Where(a => ((a.UserName == username.ToLower()) && (a.ToPhoneNumber == toPhoneNumber) && (a.FromPhoneNumber == fromPhoneNumber))).FirstOrDefault();
 
-            TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
-            var messagesFrom = MessageResource.Read(
-                from: new Twilio.Types.PhoneNumber(toPhoneNumber)
-            );
-            var messagesTo = MessageResource.Read(
-            to: new Twilio.Types.PhoneNumber(toPhoneNumber)
-            );
+            await getMessages(username, toPhoneNumber);
 
-            Debug.WriteLine("From");
-            foreach (var record in messagesFrom)
-            {
-                Console.WriteLine(record.Sid);
-                Debug.WriteLine("Debug code1");
-                Debug.WriteLine(record.Sid);
-                var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
-                if (messageDetail == null)
-                {
-                    MessageDetail singleMessage = new MessageDetail
-                    {
-                        UserName = username,
-                        MessageSid = record.Sid,
-                        Body = record.Body,
-                        TimeCreated = (record.DateCreated).ToString(),
-                        TimeSent = (record.DateSent).ToString(),
-                        Direction = (record.Direction).ToString(),
-                        FromPhoneNumber = (record.From).ToString(),
-                        ToPhoneNumber = (record.To).ToString()
-                    };
-                    _messageContext.MessageDetails.Add(singleMessage);
-                }
-
-            }
-            Debug.WriteLine("To");
-            foreach (var record in messagesTo)
-            {
-                Console.WriteLine(record.Sid);
-                Debug.WriteLine("Debug code2");
-                Debug.WriteLine(record.Sid);
-                var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
-                if (messageDetail == null)
-                {
-                    MessageDetail singleMessage = new MessageDetail
-                    {
-                        UserName = username,
-                        MessageSid = record.Sid,
-                        Body = record.Body,
-                        TimeCreated = (record.DateCreated).ToString(),
-                        TimeSent = (record.DateSent).ToString(),
-                        Direction = (record.Direction).ToString(),
-                        FromPhoneNumber = (record.From).ToString(),
-                        ToPhoneNumber = (record.To).ToString()
-                    };
-                    _messageContext.MessageDetails.Add(singleMessage);
-                }
-            }
-            await _messageContext.SaveChangesAsync();
-
-         
             var conversationDetail = await _conversationContext.ConversationDetails.FindAsync(username + fromPhoneNumber + toPhoneNumber);
             //If conversationDetail is NOT NULL, that means that we found a matching PKey, we need to UPDATE the record if the timestamp is newer. We can also set LastMessageTime to the current time of the found conversation.
             //We cannot use the same Add function because the PKey already exists
@@ -511,7 +256,8 @@ namespace VerifitServer.Controllers
                     FromPhoneNumber = fromPhoneNumber,
                     ToPhoneNumber = toPhoneNumber,
                     LastMessage = "",
-                    LastMessageTime = "1/1/0001 12:00:00 AM"
+                    LastMessageTime = "1/1/0001 12:00:00 AM",
+                    ConversationName = ""
                 };
                 foreach (var numberMessage in numberMessageList)
                 {
@@ -537,7 +283,8 @@ namespace VerifitServer.Controllers
                     FromPhoneNumber = fromPhoneNumber,
                     ToPhoneNumber = toPhoneNumber,
                     LastMessage = conversationDetail.LastMessage,
-                    LastMessageTime = conversationDetail.LastMessageTime
+                    LastMessageTime = conversationDetail.LastMessageTime,
+                    ConversationName = ""
                 };
                 foreach (var numberMessage in numberMessageList)
                 {
