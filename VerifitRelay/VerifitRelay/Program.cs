@@ -84,6 +84,41 @@ namespace VerifitRelay
                         conversation.LastMessageTime = singleMessage.Time;
                     }
 
+                    //Check from=to, to=from
+                    conversation = null;
+                    foreach (ConversationDetails conv in db.ConversationDetails)
+                    {
+                        if ((conv.FromPhoneNumber == singleMessage.ToPhoneNumber) && (conv.ToPhoneNumber == singleMessage.FromPhoneNumber))
+                        {
+                            conversation = conv;
+                        }
+                    }
+                    //If from+to+direction exists, update record
+                    if (conversation != null)
+                    {
+                        conversation.LastMessage = singleMessage.Body;
+                        conversation.LastMessageTime = singleMessage.Time;
+                        db.ConversationDetails.Update(conversation);
+                    }
+                    //if from+to+direction does not exist, create record
+                    else
+                    {
+                        conversation.ConversationId = singleMessage.ToPhoneNumber + singleMessage.FromPhoneNumber;
+                        //Loop through PhoneDetails and find where From=Num and select that user
+                        foreach (PhoneDetails phone in db.PhoneDetails)
+                        {
+                            if (phone.PhoneNumber == conversation.ToPhoneNumber)
+                            {
+                                conversation.UserName = phone.UserName;
+                            }
+                        }
+                        conversation.UserName = "";
+                        conversation.FromPhoneNumber = singleMessage.ToPhoneNumber;
+                        conversation.ToPhoneNumber = singleMessage.FromPhoneNumber;
+                        conversation.LastMessage = singleMessage.Body;
+                        conversation.LastMessageTime = singleMessage.Time;
+                    }
+
                     //What if user does not exist in DB for other end of the conversation?
 
 

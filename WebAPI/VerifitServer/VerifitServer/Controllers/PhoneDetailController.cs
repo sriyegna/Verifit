@@ -100,7 +100,7 @@ namespace VerifitServer.Controllers
             await _messageContext.SaveChangesAsync();
         }
 
-        public async Task updateConversationTables(string username, string phoneNumber)
+        /*public async Task updateConversationTables(string username, string phoneNumber)
         {
             //Update conversation tables
             var messagelist = await _messageContext.MessageDetails.Where(a => ((a.FromPhoneNumber == phoneNumber) || (a.ToPhoneNumber == phoneNumber))).ToListAsync();
@@ -136,7 +136,7 @@ namespace VerifitServer.Controllers
                         LastMessageTime = "1/1/0001 12:00:00 AM",
                         ConversationName = ""
                     };
-                    /*foreach (var numberMessage in numberMessageList)
+                    *//*foreach (var numberMessage in numberMessageList)
                     {
                         DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
                         DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
@@ -146,7 +146,7 @@ namespace VerifitServer.Controllers
                             singleConversation.LastMessage = numberMessage.Body;
                         }
                         Debug.WriteLine(numberMessage.TimeCreated);
-                    }*/
+                    }*//*
                     _conversationContext.ConversationDetails.Add(singleConversation);
                 }
                 else
@@ -163,7 +163,7 @@ namespace VerifitServer.Controllers
                         LastMessageTime = conversationDetail.LastMessageTime,
                         ConversationName = ""
                     };
-                    /*foreach (var numberMessage in numberMessageList)
+                    *//*foreach (var numberMessage in numberMessageList)
                     {
                         DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
                         DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
@@ -173,7 +173,7 @@ namespace VerifitServer.Controllers
                             singleConversation.LastMessage = numberMessage.Body;
                         }
                         Debug.WriteLine(numberMessage.TimeCreated);
-                    }*/
+                    }*//*
                     ConversationDetail conversationToUpdate = _conversationContext.ConversationDetails.Where(a => (a.ConversationId == username + phoneNumber + conversationNumber)).FirstOrDefault();
                     if (conversationToUpdate != null)
                     {
@@ -185,7 +185,7 @@ namespace VerifitServer.Controllers
                 }
             }
             await _conversationContext.SaveChangesAsync();
-        }
+        }*/
 
         // Get Phone numbers for User
         // GET: api/PhoneDetails
@@ -202,7 +202,7 @@ namespace VerifitServer.Controllers
 
                 await getMessages(username, result.PhoneNumber);
 
-                await updateConversationTables(username, result.PhoneNumber);
+                //await updateConversationTables(username, result.PhoneNumber);
                 
             }           
             return newResult;
@@ -271,9 +271,9 @@ namespace VerifitServer.Controllers
         {
             phone = "+" + phone;
 
-            await updateConversationTables(username, phone);
+            //await updateConversationTables(username, phone);
 
-            var newResult = await _conversationContext.ConversationDetails.Where(a => ((a.UserName == username) && ((a.ToPhoneNumber == phone) || (a.FromPhoneNumber == phone)))).OrderByDescending(a => DateTime.Parse(a.LastMessageTime)).ToListAsync();
+            var newResult = await _conversationContext.ConversationDetails.Where(a => (a.FromPhoneNumber == phone)).OrderByDescending(a => DateTime.Parse(a.LastMessageTime)).ToListAsync();
             return newResult;
         }
 
@@ -289,7 +289,7 @@ namespace VerifitServer.Controllers
 
             await getMessages(username, phone);
 
-            await updateConversationTables(username, phone);
+            //await updateConversationTables(username, phone);
 
             return newResult;
         }
