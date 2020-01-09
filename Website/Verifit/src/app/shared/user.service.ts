@@ -169,14 +169,12 @@ export class UserService {
     return this.http.get(this.BaseURI + '/MessageDetails/GetUserConversationMessages/' + username + "&" + number + "&" + usernumber);
   }
 
-  sendMessage(body, fromPhoneNumber, toPhoneNumber, username) {
+  sendMessage(body, fromPhoneNumber, toPhoneNumber) {
     let reqObj: MessageDetail;
     reqObj = {
       MessageSid: 'null',
       Body: body,
-      UserName: username,
-      TimeCreated: 'null',
-      TimeSent: 'null',
+      Time: 'null',
       Direction: 'null',
       FromPhoneNumber: fromPhoneNumber,  
       ToPhoneNumber: toPhoneNumber

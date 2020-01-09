@@ -36,21 +36,13 @@ namespace VerifitServer.Migrations.MessageDetail
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("TimeCreated")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("TimeSent")
+                    b.Property<string>("Time")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ToPhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("MessageSid");
 

@@ -12,6 +12,11 @@ using Twilio.Rest.Api.V2010.Account.AvailablePhoneNumberCountry;
 using System.Linq;
 using VerifitServer.Models;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using RestSharp;
+using Newtonsoft.Json.Linq;
 
 namespace VerifitServer.Controllers
 {
@@ -44,23 +49,25 @@ namespace VerifitServer.Controllers
             foreach (var record in messagesFrom)
             {
                 Console.WriteLine(record.Sid);
-                Debug.WriteLine("Debug code1");
                 Debug.WriteLine(record.Sid);
                 var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
-                if (messageDetail == null)
+                if (!((record.To).ToString() == "+16473358324"))
                 {
-                    MessageDetail singleMessage = new MessageDetail
+                    if (messageDetail == null)
                     {
-                        UserName = username,
-                        MessageSid = record.Sid,
-                        Body = record.Body,
-                        TimeCreated = (record.DateCreated).ToString(),
-                        TimeSent = (record.DateSent).ToString(),
-                        Direction = (record.Direction).ToString(),
-                        FromPhoneNumber = (record.From).ToString(),
-                        ToPhoneNumber = (record.To).ToString()
-                    };
-                    _messageContext.MessageDetails.Add(singleMessage);
+                        MessageDetail singleMessage = new MessageDetail
+                        {
+                            //UserName = username,
+                            MessageSid = record.Sid,
+                            Body = record.Body,
+                            Time = (record.DateCreated).ToString(),
+                            //TimeSent = (record.DateSent).ToString(),
+                            Direction = (record.Direction).ToString(),
+                            FromPhoneNumber = (record.From).ToString(),
+                            ToPhoneNumber = (record.To).ToString()
+                        };
+                        _messageContext.MessageDetails.Add(singleMessage);
+                    }
                 }
 
             }
@@ -71,21 +78,24 @@ namespace VerifitServer.Controllers
                 Debug.WriteLine("Debug code2");
                 Debug.WriteLine(record.Sid);
                 var messageDetail = await _messageContext.MessageDetails.FindAsync(record.Sid);
-                if (messageDetail == null)
-                {
-                    MessageDetail singleMessage = new MessageDetail
+                if (!((record.To).ToString() == "+16473358324")) {
+                    if (messageDetail == null)
                     {
-                        UserName = username,
-                        MessageSid = record.Sid,
-                        Body = record.Body,
-                        TimeCreated = (record.DateCreated).ToString(),
-                        TimeSent = (record.DateSent).ToString(),
-                        Direction = (record.Direction).ToString(),
-                        FromPhoneNumber = (record.From).ToString(),
-                        ToPhoneNumber = (record.To).ToString()
-                    };
-                    _messageContext.MessageDetails.Add(singleMessage);
+                        MessageDetail singleMessage = new MessageDetail
+                        {
+                            //UserName = username,
+                            MessageSid = record.Sid,
+                            Body = record.Body,
+                            Time = (record.DateCreated).ToString(),
+                            //TimeSent = (record.DateSent).ToString(),
+                            Direction = (record.Direction).ToString(),
+                            FromPhoneNumber = (record.From).ToString(),
+                            ToPhoneNumber = (record.To).ToString()
+                        };
+                        _messageContext.MessageDetails.Add(singleMessage);
+                    }
                 }
+                
             }
             await _messageContext.SaveChangesAsync();
         }
@@ -115,7 +125,7 @@ namespace VerifitServer.Controllers
                 if (conversationDetail == null)
                 {
                     Debug.WriteLine("Looping ConversationNumber");
-                    var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
+                    //var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
                     ConversationDetail singleConversation = new ConversationDetail
                     {
                         ConversationId = username + phoneNumber + conversationNumber,
@@ -126,7 +136,7 @@ namespace VerifitServer.Controllers
                         LastMessageTime = "1/1/0001 12:00:00 AM",
                         ConversationName = ""
                     };
-                    foreach (var numberMessage in numberMessageList)
+                    /*foreach (var numberMessage in numberMessageList)
                     {
                         DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
                         DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
@@ -136,13 +146,13 @@ namespace VerifitServer.Controllers
                             singleConversation.LastMessage = numberMessage.Body;
                         }
                         Debug.WriteLine(numberMessage.TimeCreated);
-                    }
+                    }*/
                     _conversationContext.ConversationDetails.Add(singleConversation);
                 }
                 else
                 {
                     Debug.Write("Updating Conversation Found");
-                    var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
+                    //var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == conversationNumber) || (a.ToPhoneNumber == conversationNumber))).ToListAsync();
                     ConversationDetail singleConversation = new ConversationDetail
                     {
                         ConversationId = username + phoneNumber + conversationNumber,
@@ -153,7 +163,7 @@ namespace VerifitServer.Controllers
                         LastMessageTime = conversationDetail.LastMessageTime,
                         ConversationName = ""
                     };
-                    foreach (var numberMessage in numberMessageList)
+                    /*foreach (var numberMessage in numberMessageList)
                     {
                         DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
                         DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
@@ -163,7 +173,7 @@ namespace VerifitServer.Controllers
                             singleConversation.LastMessage = numberMessage.Body;
                         }
                         Debug.WriteLine(numberMessage.TimeCreated);
-                    }
+                    }*/
                     ConversationDetail conversationToUpdate = _conversationContext.ConversationDetails.Where(a => (a.ConversationId == username + phoneNumber + conversationNumber)).FirstOrDefault();
                     if (conversationToUpdate != null)
                     {
@@ -196,6 +206,61 @@ namespace VerifitServer.Controllers
                 
             }           
             return newResult;
+        }
+
+        // Get Phone numbers for User
+        // GET: api/PhoneDetails
+        [HttpGet("SendAMessage/")]
+        public async Task<string> SendAMessageAsync()
+        {
+
+            var client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/search?areacode=289");
+            var request = new RestRequest(Method.GET);
+            var cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            var response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+            var jsonObj = JObject.Parse(response.Content.ToString());
+            var numList = jsonObj["data"].Last();
+            Debug.WriteLine(numList);
+            var numberToPurchase = jsonObj["data"].Last()["e164"];
+            Debug.WriteLine(numberToPurchase);
+
+
+            //Purchase #
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/");
+            request = new RestRequest(Method.POST);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"number\"\r\n\r\n" + numberToPurchase + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+            var purchasedNumberId = (JObject.Parse(response.Content.ToString()))["id"];
+            Debug.Write("ID of Phone no");
+            Debug.Write(purchasedNumberId);
+
+            //Add to Group Membership
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/number_groups/4ccced3c-c49b-4cfe-a70b-b647c2e4b549/number_group_memberships");
+            request = new RestRequest(Method.POST);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"phone_number_id\"\r\n\r\n" + purchasedNumberId + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
+            //Add context to group
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/" + purchasedNumberId);
+            request = new RestRequest(Method.PUT);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nVerifitGroup\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_handler\"\r\n\r\nrelay_context\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_relay_context\"\r\n\r\nVerifit\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
+            return response.Content.ToString();
         }
 
 
@@ -248,7 +313,7 @@ namespace VerifitServer.Controllers
             if (conversationDetail == null)
             {
                 Debug.WriteLine("Looping ConversationNumber");
-                var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == toPhoneNumber) || (a.ToPhoneNumber == toPhoneNumber))).ToListAsync();
+                //var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == toPhoneNumber) || (a.ToPhoneNumber == toPhoneNumber))).ToListAsync();
                 ConversationDetail singleConversation = new ConversationDetail
                 {
                     ConversationId = username + fromPhoneNumber + toPhoneNumber,
@@ -259,7 +324,7 @@ namespace VerifitServer.Controllers
                     LastMessageTime = "1/1/0001 12:00:00 AM",
                     ConversationName = ""
                 };
-                foreach (var numberMessage in numberMessageList)
+               /* foreach (var numberMessage in numberMessageList)
                 {
                     DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
                     DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
@@ -269,13 +334,13 @@ namespace VerifitServer.Controllers
                         singleConversation.LastMessage = numberMessage.Body;
                     }
                     Debug.WriteLine(numberMessage.TimeCreated);
-                }
+                }*/
                 _conversationContext.ConversationDetails.Add(singleConversation);
             }
             else
             {
                 Debug.Write("Updating Conversation Found");
-                var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == toPhoneNumber) || (a.ToPhoneNumber == toPhoneNumber))).ToListAsync();
+                //var numberMessageList = await _messageContext.MessageDetails.Where(a => ((a.UserName == username) && (a.FromPhoneNumber == toPhoneNumber) || (a.ToPhoneNumber == toPhoneNumber))).ToListAsync();
                 ConversationDetail singleConversation = new ConversationDetail
                 {
                     ConversationId = username + fromPhoneNumber + toPhoneNumber,
@@ -286,7 +351,7 @@ namespace VerifitServer.Controllers
                     LastMessageTime = conversationDetail.LastMessageTime,
                     ConversationName = ""
                 };
-                foreach (var numberMessage in numberMessageList)
+                /*foreach (var numberMessage in numberMessageList)
                 {
                     DateTime lastMessageTime = DateTime.Parse(singleConversation.LastMessageTime);
                     DateTime numberMessageDate = DateTime.Parse(numberMessage.TimeCreated);
@@ -296,7 +361,7 @@ namespace VerifitServer.Controllers
                         singleConversation.LastMessage = numberMessage.Body;
                     }
                     Debug.WriteLine(numberMessage.TimeCreated);
-                }
+                }*/
                 ConversationDetail conversationToUpdate = _conversationContext.ConversationDetails.Where(a => (a.ConversationId == username + fromPhoneNumber + toPhoneNumber)).FirstOrDefault();
                 if (conversationToUpdate != null)
                 {
@@ -369,20 +434,57 @@ namespace VerifitServer.Controllers
         public async Task<ActionResult<PhoneDetail>> PostPhoneDetailCan(PhoneDetail phoneDetail)
         {
 
-            //Get Signalwire number
-            TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
+            var client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/search?areacode=289");
+            var request = new RestRequest(Method.GET);
+            var cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            var response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+            var jsonObj = JObject.Parse(response.Content.ToString());
+            var numList = jsonObj["data"].Last();
+            Debug.WriteLine(numList);
+            var numberToPurchase = jsonObj["data"].Last()["e164"];
+            Debug.WriteLine(numberToPurchase);
 
-            var localAvailableNumbers = LocalResource.Read("CAN", inRegion: "ON");
 
-            var firstNumber = localAvailableNumbers.First();
-            var incomingPhoneNumber = IncomingPhoneNumberResource.Create(
-                phoneNumber: firstNumber.PhoneNumber);
+            //Purchase #
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/");
+            request = new RestRequest(Method.POST);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"number\"\r\n\r\n" + numberToPurchase + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+            var purchasedNumberId = (JObject.Parse(response.Content.ToString()))["id"];
+            Debug.Write("ID of Phone no");
+            Debug.Write(purchasedNumberId);
+
+            //Add to Group Membership
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/number_groups/4ccced3c-c49b-4cfe-a70b-b647c2e4b549/number_group_memberships");
+            request = new RestRequest(Method.POST);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"phone_number_id\"\r\n\r\n" + purchasedNumberId + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
+            //Add context to group
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/" + purchasedNumberId);
+            request = new RestRequest(Method.PUT);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nVerifitGroup\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_handler\"\r\n\r\nrelay_context\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_relay_context\"\r\n\r\nVerifit\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
 
             //Save it to model
             phoneDetail.UserName = (phoneDetail.UserName).ToLower();
             Console.WriteLine(phoneDetail.UserName);
-            phoneDetail.PhoneNumber = incomingPhoneNumber.PhoneNumber.ToString();
-            phoneDetail.PhoneSid = incomingPhoneNumber.Sid;
+            phoneDetail.PhoneNumber = numberToPurchase.ToString();
+            phoneDetail.PhoneSid = purchasedNumberId.ToString();
             DateTime createDate = DateTime.Now;
             DateTime expireDate = createDate.AddDays(30);
             phoneDetail.TimeCreated = (createDate.ToString("s"));
@@ -401,20 +503,57 @@ namespace VerifitServer.Controllers
         public async Task<ActionResult<PhoneDetail>> PostPhoneDetailUs(PhoneDetail phoneDetail)
         {
 
-            //Get Signalwire number
-            TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
+            var client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/search?region=TX");
+            var request = new RestRequest(Method.GET);
+            var cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            var response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+            var jsonObj = JObject.Parse(response.Content.ToString());
+            var numList = jsonObj["data"].Last();
+            Debug.WriteLine(numList);
+            var numberToPurchase = jsonObj["data"].Last()["e164"];
+            Debug.WriteLine(numberToPurchase);
 
-            var localAvailableNumbers = LocalResource.Read("US");
 
-            var firstNumber = localAvailableNumbers.First();
-            var incomingPhoneNumber = IncomingPhoneNumberResource.Create(
-                phoneNumber: firstNumber.PhoneNumber);
+            //Purchase #
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/");
+            request = new RestRequest(Method.POST);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"number\"\r\n\r\n" + numberToPurchase + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+            var purchasedNumberId = (JObject.Parse(response.Content.ToString()))["id"];
+            Debug.Write("ID of Phone no");
+            Debug.Write(purchasedNumberId);
+
+            //Add to Group Membership
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/number_groups/4ccced3c-c49b-4cfe-a70b-b647c2e4b549/number_group_memberships");
+            request = new RestRequest(Method.POST);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"phone_number_id\"\r\n\r\n" + purchasedNumberId + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
+            //Add context to group
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/" + purchasedNumberId);
+            request = new RestRequest(Method.PUT);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nVerifitGroup\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_handler\"\r\n\r\nrelay_context\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_relay_context\"\r\n\r\nVerifit\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
 
             //Save it to model
             Console.WriteLine(phoneDetail.UserName);
             phoneDetail.UserName = (phoneDetail.UserName).ToLower();
-            phoneDetail.PhoneNumber = incomingPhoneNumber.PhoneNumber.ToString();
-            phoneDetail.PhoneSid = incomingPhoneNumber.Sid;
+            phoneDetail.PhoneNumber = numberToPurchase.ToString();
+            phoneDetail.PhoneSid = purchasedNumberId.ToString();
             DateTime createDate = DateTime.Now;
             DateTime expireDate = createDate.AddDays(30);
             phoneDetail.TimeCreated = (createDate.ToString("s"));

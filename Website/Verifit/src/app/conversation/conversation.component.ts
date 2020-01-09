@@ -64,7 +64,7 @@ export class ConversationComponent implements OnInit {
   sendMessage() {
     console.log(this.messageBody)
     var conversation = JSON.parse(localStorage.getItem("conversation"));
-    this.service.sendMessage(this.messageBody, conversation.FromPhoneNumber, conversation.ToPhoneNumber, this.userDetails.UserName).subscribe(
+    this.service.sendMessage(this.messageBody, conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
       res => {
         console.log("Succesful sending");
         console.log(res);

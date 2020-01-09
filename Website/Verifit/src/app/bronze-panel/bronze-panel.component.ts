@@ -108,7 +108,7 @@ export class BronzePanelComponent implements OnInit {
 
   sendMessage() {
     console.log(this.messageBody)
-    this.service.sendMessage(this.messageBody, this.selectedNumber, this.recipientPhone, this.userDetails.UserName).subscribe(
+    this.service.sendMessage(this.messageBody, this.selectedNumber, this.recipientPhone).subscribe(
       res => {
         console.log("Return from new sendmessage");
         console.log(res);

@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using PhoneAPI.Models;
 using VerifitServer.Models;
+using static VerifitServer.Services.OnIncomingMessage;
 
 namespace VerifitServer
 {
@@ -25,6 +26,8 @@ namespace VerifitServer
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            
         }
 
         public IConfiguration Configuration { get; }

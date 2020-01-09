@@ -35,7 +35,7 @@ namespace VerifitServer.Controllers
             return await _context.MessageDetails.ToListAsync();
         }
 
-        [HttpGet("GetUserConversationMessages/{username}&{toPhoneNumber}&{fromPhoneNumber}")]
+        /*[HttpGet("GetUserConversationMessages/{username}&{toPhoneNumber}&{fromPhoneNumber}")]
         public async Task<ActionResult<IEnumerable<MessageDetail>>> GetUserConversationMessages(string username, string toPhoneNumber, string fromPhoneNumber)
         {
             var tophoneNumber = "+" + toPhoneNumber;
@@ -51,7 +51,7 @@ namespace VerifitServer.Controllers
             }
 
             return messageDetail;
-        }
+        }*/
 
         // GET: api/MessageDetails/5
         [HttpGet("{id}")]
@@ -124,70 +124,10 @@ namespace VerifitServer.Controllers
             );
 
             messageDetail.MessageSid = message.Sid;
-            messageDetail.TimeCreated = (message.DateCreated).ToString();
-            messageDetail.TimeSent = messageDetail.TimeCreated;
+            messageDetail.Time = DateTime.UtcNow.ToString();
             messageDetail.Direction = (message.Direction).ToString();
                        
             _context.MessageDetails.Add(messageDetail);
-
-            //Get new messages
-            var messagesFrom = MessageResource.Read(
-                    from: new Twilio.Types.PhoneNumber(messageDetail.ToPhoneNumber)
-                    );
-            var messagesTo = MessageResource.Read(
-            to: new Twilio.Types.PhoneNumber(messageDetail.ToPhoneNumber)
-            );
-
-            Debug.WriteLine("From");
-            foreach (var record in messagesFrom)
-            {
-                Console.WriteLine(record.Sid);
-                Debug.WriteLine("Debug code1");
-                Debug.WriteLine(record.Sid);
-                var mDetail = await _context.MessageDetails.FindAsync(record.Sid);
-                if (mDetail == null)
-                {
-                    MessageDetail singleMessage = new MessageDetail
-                    {
-                        UserName = messageDetail.UserName,
-                        MessageSid = record.Sid,
-                        Body = record.Body,
-                        TimeCreated = (record.DateCreated).ToString(),
-                        TimeSent = (record.DateSent).ToString(),
-                        Direction = (record.Direction).ToString(),
-                        FromPhoneNumber = (record.From).ToString(),
-                        ToPhoneNumber = (record.To).ToString()
-                    };
-                    _context.MessageDetails.Add(singleMessage);
-                }
-
-            }
-            Debug.WriteLine("To");
-            foreach (var record in messagesTo)
-            {
-                Console.WriteLine(record.Sid);
-                Debug.WriteLine("Debug code2");
-                Debug.WriteLine(record.Sid);
-                var mDetail = await _context.MessageDetails.FindAsync(record.Sid);
-                if (messageDetail == null)
-                {
-                    MessageDetail singleMessage = new MessageDetail
-                    {
-                        UserName = messageDetail.UserName,
-                        MessageSid = record.Sid,
-                        Body = record.Body,
-                        TimeCreated = (record.DateCreated).ToString(),
-                        TimeSent = (record.DateSent).ToString(),
-                        Direction = (record.Direction).ToString(),
-                        FromPhoneNumber = (record.From).ToString(),
-                        ToPhoneNumber = (record.To).ToString()
-                    };
-                    _context.MessageDetails.Add(singleMessage);
-                }
-            }
-            await _context.SaveChangesAsync();
-
-
 
             return CreatedAtAction("GetMessageDetail", new { id = messageDetail.MessageSid }, messageDetail);
         }

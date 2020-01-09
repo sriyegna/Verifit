@@ -17,17 +17,10 @@ namespace VerifitServer.Models
         [Column(TypeName = ("nvarchar(MAX)"))]
         [Required]
         public string Body { get; set; }
-        [Column(TypeName = ("nvarchar(256)"))]
-        [Required]
-        public string UserName { get; set; }
 
         [Column(TypeName = ("nvarchar(50)"))]
         [Required]
-        public string TimeCreated { get; set; }
-
-        [Column(TypeName = ("nvarchar(50)"))]
-        [Required]
-        public string TimeSent { get; set; }
+        public string Time { get; set; }
 
         [Column(TypeName = ("nvarchar(20)"))]
         [Required]
