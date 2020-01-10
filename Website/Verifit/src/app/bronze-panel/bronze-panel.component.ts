@@ -54,7 +54,7 @@ export class BronzePanelComponent implements OnInit {
         if (localStorage.getItem("selectedNumber") != null) {
           console.log("Getting " + localStorage.getItem("selectedNumber"));
           this.selectedNumber = localStorage.getItem("selectedNumber");
-          this.service.populateConversations(this.userDetails.UserName)
+          this.service.populateConversations()
         }
       },
       err => {
@@ -95,7 +95,7 @@ export class BronzePanelComponent implements OnInit {
     localStorage.setItem("selectedNumber", phoneNumber);
     this.service.selectedNumber = phoneNumber;
     this.selectedNumber = phoneNumber;
-    this.service.populateConversations(this.userDetails.UserName);
+    this.service.populateConversations();
   }
 
   clickConversation(conversation) {
@@ -116,21 +116,30 @@ export class BronzePanelComponent implements OnInit {
         this.recipientPhone = "";
         //let element = document.getElementById('exampleModal');
         //element.className = "modal fade close";
-        this.service.updatePhoneConversations(this.userDetails.username, this.selectedNumber).subscribe(
-          res => {
-            console.log("return from new updatephoneconvo");
-            console.log(res);
-            this.service.conversations = res;
-          },
-          err => {
+        
+        
+        //***Update conversations after message is sent
 
-          }
-        )
+      }
+    );
+  }
+
+  deleteConversation(conversation, e) {
+    console.log("Outputting conversation");
+    console.log(conversation);
+    e.stopPropagation();
+    this.service.deleteConversation(conversation).subscribe(
+      res => {
+        this.service.populateConversations()
       },
       err => {
         console.log(err);
       }
-    );
+    )
+  }
+
+  dontPropogate(e) {
+    e.stopPropagation();
   }
   
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PhoneAPI.Models;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using VerifitServer.Models;
@@ -17,33 +18,30 @@ namespace VerifitServer.Controllers
     public class MessageDetailsController : ControllerBase
     {
         private readonly MessageDetailContext _context;
+        private readonly ConversationDetailContext _conversationContext;
 
-        public MessageDetailsController(MessageDetailContext context)
+        public MessageDetailsController(MessageDetailContext context, ConversationDetailContext conversationContext)
         {
             _context = context;
+            _conversationContext = conversationContext;
         }
 
-        public async void AddMessageToDb(string id)
-        {
-            Console.WriteLine("Add Message Called");
-        }
-
-        // GET: api/MessageDetails
+        // GET: api/MessageDetails 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MessageDetail>>> GetMessageDetails()
         {
             return await _context.MessageDetails.ToListAsync();
         }
 
-        /*[HttpGet("GetUserConversationMessages/{username}&{toPhoneNumber}&{fromPhoneNumber}")]
-        public async Task<ActionResult<IEnumerable<MessageDetail>>> GetUserConversationMessages(string username, string toPhoneNumber, string fromPhoneNumber)
+        [HttpGet("GetUserConversationMessages/{toPhoneNumber}&{fromPhoneNumber}")]
+        public async Task<ActionResult<IEnumerable<MessageDetail>>> GetUserConversationMessages(string toPhoneNumber, string fromPhoneNumber)
         {
             var tophoneNumber = "+" + toPhoneNumber;
             var fromphoneNumber = "+" + fromPhoneNumber;
-            var messageDetail = await _context.MessageDetails.Where(a => (a.UserName == (username).ToLower()) && 
-                (((a.ToPhoneNumber == tophoneNumber) && (a.FromPhoneNumber == fromphoneNumber)) || 
-                ((a.FromPhoneNumber == tophoneNumber) && (a.ToPhoneNumber == fromphoneNumber))))
-                .OrderBy(a => DateTime.Parse(a.TimeCreated)).ToListAsync();
+            var messageDetail = await _context.MessageDetails.Where(a =>  
+                (((a.ToPhoneNumber == tophoneNumber) && (a.FromPhoneNumber == fromphoneNumber) && (a.Direction == "outbound-api")) || 
+                ((a.FromPhoneNumber == tophoneNumber) && (a.ToPhoneNumber == fromphoneNumber) && (a.Direction == "inbound"))))
+                .OrderBy(a => DateTime.Parse(a.Time)).ToListAsync();
 
             if (messageDetail == null)
             {
@@ -51,7 +49,7 @@ namespace VerifitServer.Controllers
             }
 
             return messageDetail;
-        }*/
+        }
 
         // GET: api/MessageDetails/5
         [HttpGet("{id}")]
@@ -128,9 +126,47 @@ namespace VerifitServer.Controllers
             messageDetail.Direction = (message.Direction).ToString();
                        
             _context.MessageDetails.Add(messageDetail);
+            await _context.SaveChangesAsync();
+
+            //Update conversation table
+            
+            var conversationsToUpdate = await _conversationContext.ConversationDetails.Where(a => ((a.FromPhoneNumber == messageDetail.FromPhoneNumber) && (a.ToPhoneNumber == messageDetail.ToPhoneNumber)) || ((a.FromPhoneNumber == messageDetail.ToPhoneNumber) && (a.ToPhoneNumber == messageDetail.FromPhoneNumber))).ToListAsync();
+            if (conversationsToUpdate.Count != 0) { 
+                foreach (ConversationDetail convo in conversationsToUpdate)
+                {
+                    convo.LastMessage = messageDetail.Body;
+                    convo.LastMessageTime = messageDetail.Time;
+                    _conversationContext.ConversationDetails.Update(convo);
+                }
+            }
+            else
+            {
+                ConversationDetail convo = new ConversationDetail
+                {
+                    ConversationId = messageDetail.ToPhoneNumber + messageDetail.FromPhoneNumber,
+                    ConversationName = "",
+                    FromPhoneNumber = messageDetail.FromPhoneNumber,
+                    ToPhoneNumber = messageDetail.ToPhoneNumber,
+                    LastMessage = messageDetail.Body,
+                    LastMessageTime = messageDetail.Time
+                };
+                _conversationContext.ConversationDetails.Add(convo);
+                convo = new ConversationDetail
+                {
+                    ConversationId = messageDetail.FromPhoneNumber + messageDetail.ToPhoneNumber,
+                    ConversationName = "",
+                    FromPhoneNumber = messageDetail.ToPhoneNumber,
+                    ToPhoneNumber = messageDetail.FromPhoneNumber,
+                    LastMessage = messageDetail.Body,
+                    LastMessageTime = messageDetail.Time
+                };
+                _conversationContext.ConversationDetails.Add(convo);
+            }
+            await _conversationContext.SaveChangesAsync();
 
             return CreatedAtAction("GetMessageDetail", new { id = messageDetail.MessageSid }, messageDetail);
         }
+
 
         // DELETE: api/MessageDetails/5
         [HttpDelete("{id}")]
@@ -147,6 +183,25 @@ namespace VerifitServer.Controllers
 
             return messageDetail;
         }
+
+
+        [HttpPost]
+        [Route("DeleteMessage")]
+        public async Task<ActionResult<MessageDetail>> DeleteMessage(MessageDetail message)
+        {
+            var messageDetail = await _context.MessageDetails.FindAsync(message.MessageSid);
+
+            if (messageDetail == null)
+            {
+                return NotFound();
+            }
+
+            _context.MessageDetails.Remove(messageDetail);
+            await _context.SaveChangesAsync();
+
+            return messageDetail;
+        }
+
 
         private bool MessageDetailExists(string id)
         {

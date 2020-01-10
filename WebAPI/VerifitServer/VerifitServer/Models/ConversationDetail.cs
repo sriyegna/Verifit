@@ -18,9 +18,6 @@ namespace PhoneAPI.Models
         public string ConversationId { get; set; }
         [Column(TypeName = ("nvarchar(256)"))]
         [Required]
-        public string UserName { get; set; }
-        [Column(TypeName = ("nvarchar(256)"))]
-        [Required]
         public string ConversationName { get; set; }
         [Column(TypeName =("nvarchar(20)"))]
         [Required]

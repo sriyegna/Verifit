@@ -57,42 +57,84 @@
 
 <app-navbar></app-navbar>
 
-<div class="row mt-5">
-  <div class="offset-1 col-10">
-    <div class="row">
-      <div class="offset-2 col-2 my-3">
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{selectedNumber}}
-          </button>
-          <div id="phone-number-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <div class="dropdown-item" href="#" *ngFor="let phone of service.userPhoneNumbers" (click)="callFn(phone.PhoneNumber)">{{phone.Country}} - {{phone.PhoneNumber}}</div>
+ <div class="row mt-5">
+   <div class="offset-5 col-2 my-3">
+     <div class="dropdown">
+       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+         {{selectedNumber}}
+       </button>
+       <div id="phone-number-dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+         <div class="dropdown-item" href="#" *ngFor="let phone of service.userPhoneNumbers" (click)="callFn(phone.PhoneNumber)">{{phone.Country}} - {{phone.PhoneNumber}}</div>
+       </div>
+     </div>
+   </div>
+
+   <!--
+   <div class="col-2 my-3">
+     <button class="btn btn-primary" (click)="requestUSNumber()">Get a US number!</button>
+   </div>
+
+   <div class="col-2 my-3">
+     <button class="btn btn-danger" (click)="requestCANumber()">Get a CA number!</button>
+   </div>
+
+   <div class="offset-4 col-3 my-3">
+     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+       New Conversation!
+     </button>
+   </div>
+   -->
+</div>
+
+<!-- Conversations -->
+<div class="row">
+  <div class="col-md-10 mx-auto">
+    <div class="mx-auto container" *ngFor="let conversation of service.conversations"  (click)="clickConversation(conversation)">
+      <img class="avatar" src="/assets/img/avatar.png" alt="Avatar">
+      <span>{{conversation.ConversationName}} - {{conversation.ToPhoneNumber}}</span>
+      <button class="btn btn-danger btn-circle btn-circle-sm m-1 float-right" data-toggle="modal" attr.data-target="#s{{conversation.ConversationId}}" (click)="dontPropogate($event)"><i class="fa fa-times"></i></button>
+      <br>
+      <span>{{conversation.LastMessage}}</span>
+      <span class="time-right">{{conversation.LastMessageTime}}</span>
+
+      <!-- Confirm Delete Modal -->
+      <div class="modal fade" attr.id="s{{conversation.ConversationId}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Delete Conversation</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to delete this conversation?</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" (click)="deleteConversation(conversation, $event)" data-dismiss="modal">Delete</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
           </div>
         </div>
       </div>
+      <!-- End Confirm Delete Modal-->
 
-      <div class="col-2 my-3">
-        <button class="btn btn-primary" (click)="requestUSNumber()">Get a US number!</button>
-      </div>
 
-      <div class="col-2 my-3">
-        <button class="btn btn-danger" (click)="requestCANumber()">Get a CA number!</button>
-      </div>
-
-      <div class="col-2 my-3">
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
-          New Conversation!
-        </button>
-      </div>
     </div>
+    
   </div>
 </div>
+
+
+<!--- Send button -->
+<button class="btn btn-info btn-circle btn-circle-xl m-1 floating-send" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-paper-plane"></i></button>
+
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Send Message</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -115,19 +157,5 @@
         <button type="button" class="btn btn-primary" (click)="sendMessage()">Send message</button>
       </div>
     </div>
-  </div>
-</div>
-
-
-<div class="row">
-  <div class="col-md-10 mx-auto">
-    <div class="mx-auto container" *ngFor="let conversation of service.conversations"  (click)="clickConversation(conversation)">
-      <img class="avatar" src="/assets/img/avatar.png" alt="Avatar">
-      <span>{{conversation.ConversationName}} - {{conversation.ToPhoneNumber}}</span>
-      <br>
-      <span>{{conversation.LastMessage}}</span>
-      <span class="time-right">{{conversation.LastMessageTime}}</span>
-    </div>
-    
   </div>
 </div>

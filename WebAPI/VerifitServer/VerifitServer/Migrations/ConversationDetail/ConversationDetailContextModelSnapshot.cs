@@ -44,10 +44,6 @@ namespace VerifitServer.Migrations.ConversationDetail
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(256)");
-
                     b.HasKey("ConversationId");
 
                     b.ToTable("ConversationDetails");

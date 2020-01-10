@@ -51,7 +51,7 @@ namespace VerifitServer.Controllers
         public async Task<ActionResult<IEnumerable<ConversationDetail>>> GetUserConversations(string username, string fromPhoneNumber)
         {
             var phoneNumber = "+" + fromPhoneNumber;
-            var conversationDetail = await _context.ConversationDetails.Where(a => (a.UserName == username && a.FromPhoneNumber == phoneNumber)).OrderByDescending(a => a.LastMessageTime).OrderByDescending(a => DateTime.Parse(a.LastMessageTime)).ToListAsync();
+            var conversationDetail = await _context.ConversationDetails.Where(a => (a.FromPhoneNumber == phoneNumber)).OrderByDescending(a => a.LastMessageTime).OrderByDescending(a => DateTime.Parse(a.LastMessageTime)).ToListAsync();
 
             if (conversationDetail == null)
             {
@@ -99,6 +99,23 @@ namespace VerifitServer.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetConversationDetail", new { id = conversationDetail.ConversationId }, conversationDetail);
+        }
+
+        [HttpPost]
+        [Route("DeleteConversation")]
+        public async Task<ActionResult<ConversationDetail>> DeleteConversation(ConversationDetail conversation)
+        {
+            var conversationDetail = await _context.ConversationDetails.FindAsync(conversation.ConversationId);
+
+            if (conversationDetail == null)
+            {
+                return NotFound();
+            }
+
+            _context.ConversationDetails.Remove(conversationDetail);
+            await _context.SaveChangesAsync();
+
+            return conversationDetail;
         }
 
         // DELETE: api/ConversationDetails/5

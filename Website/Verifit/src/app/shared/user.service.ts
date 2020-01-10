@@ -7,6 +7,7 @@ import { MessageDetail } from '../shared/message-detail.model';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { ConversationDetail } from './conversation-detail.model';
 
 @Injectable({
   providedIn: 'root'
@@ -134,19 +135,18 @@ export class UserService {
     return this.http.get(this.BaseURI + '/PhoneDetail/GetUserPhoneNumbers/' + username);
   }
 
-  getUsersConversations(username, number) {
+  getUsersConversations(number) {
     number = number.substring(1, number.length);
     //return this.http.get(this.BaseURI + '/ConversationDetails/GetUserConversations/' + username + "&" + number)
-    return this.http.get(this.BaseURI + '/PhoneDetail/UpdatePhoneConversations/' + username + "&" + number)
+    return this.http.get(this.BaseURI + '/PhoneDetail/UpdatePhoneConversations/' + number)
   }
 
-  populateConversations(username) {
+  populateConversations() {
     console.log("Conversation Panel Loaded");
     var selectedNumber = localStorage.getItem("selectedNumber");
     console.log(selectedNumber);
-    console.log("Username in popcon:" + username);
     if (selectedNumber != null) {
-      this.getUsersConversations(username, selectedNumber).subscribe(
+      this.getUsersConversations(selectedNumber).subscribe(
         res => {
           console.log(res);
           this.conversations = res;
@@ -158,15 +158,15 @@ export class UserService {
     }
   }
 
-  updatePhoneConversations(username, selectedNumber) {
-    selectedNumber = selectedNumber.substring(1, selectedNumber.length);
-    return this.http.get(this.BaseURI + '/PhoneDetail/UpdatePhoneConversations/' + username + "&" + selectedNumber);
-  }
+  // updatePhoneConversations(username, selectedNumber) {
+  //   selectedNumber = selectedNumber.substring(1, selectedNumber.length);
+  //   return this.http.get(this.BaseURI + '/PhoneDetail/UpdatePhoneConversations/' + selectedNumber);
+  // }
 
-  getUserConversationMessages(username, selectedNumber, toPhoneNumber) {
+  getUserConversationMessages(selectedNumber, toPhoneNumber) {
     var number = (toPhoneNumber).substring(1, (toPhoneNumber).length);
     var usernumber = (selectedNumber).substring(1, (selectedNumber).length);
-    return this.http.get(this.BaseURI + '/MessageDetails/GetUserConversationMessages/' + username + "&" + number + "&" + usernumber);
+    return this.http.get(this.BaseURI + '/MessageDetails/GetUserConversationMessages/' + number + "&" + usernumber);
   }
 
   sendMessage(body, fromPhoneNumber, toPhoneNumber) {
@@ -184,11 +184,37 @@ export class UserService {
     return this.http.post(this.BaseURI + '/MessageDetails/SendMessage', reqObj);
   }
 
-  getConversationMessages(username, fromPhoneNumber, toPhoneNumber) {
+  getConversationMessages(fromPhoneNumber, toPhoneNumber) {
     var fromnumber = (fromPhoneNumber).substring(1, (fromPhoneNumber).length);
     var tonumber = (toPhoneNumber).substring(1, (toPhoneNumber).length);
 
-    return this.http.get(this.BaseURI + '/PhoneDetail/GetConversationMessages/' + username + "&" + fromnumber + "&" + tonumber);
+    return this.http.get(this.BaseURI + '/PhoneDetail/GetConversationMessages/' + fromnumber + "&" + tonumber);
+  }
+  
+  deleteConversation(conversation) {
+    let reqObj: ConversationDetail;
+    reqObj = {
+      ConversationId: conversation.ConversationId,
+      ConversationName: 'null',
+      FromPhoneNumber: conversation.FromPhoneNumber,
+      ToPhoneNumber: conversation.ToPhoneNumber,
+      LastMessage: conversation.LastMessage,
+      LastMessageTime: conversation.LastMessageTime
+    };
+    return this.http.post(this.BaseURI + '/ConversationDetails/DeleteConversation', reqObj);
+  }
+
+  deleteMessage(message) {
+    let reqObj: MessageDetail;
+    reqObj = {
+      MessageSid: message.MessageSid,
+      Body: 'null',
+      Time: 'null',
+      Direction: 'null',
+      FromPhoneNumber: 'null',  
+      ToPhoneNumber: 'null'
+    }
+    return this.http.post(this.BaseURI + '/MessageDetails/DeleteMessage', reqObj);
   }
 
 }

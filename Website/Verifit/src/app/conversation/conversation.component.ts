@@ -38,9 +38,9 @@ export class ConversationComponent implements OnInit {
 
         var conversation = JSON.parse(localStorage.getItem("conversation"));
 
-        this.service.getConversationMessages(this.userDetails.UserName, conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
+        this.service.getConversationMessages(conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
           res => {
-            this.service.getUserConversationMessages(this.userDetails.UserName, conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
+            this.service.getUserConversationMessages(conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
               res => {
                 this.messageList = res;
                 this.scrollTo();
@@ -69,7 +69,7 @@ export class ConversationComponent implements OnInit {
         console.log("Succesful sending");
         console.log(res);
 
-        this.service.getUserConversationMessages(this.userDetails.UserName, conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
+        this.service.getUserConversationMessages(conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
           res => {
             console.log("Output message details");
             console.log(res);
@@ -102,4 +102,29 @@ export class ConversationComponent implements OnInit {
       duration: 200
     });
   }
+
+  deleteMessage(message, e) {
+    //e.stopPropagation();
+    this.service.deleteMessage(message).subscribe(
+      res => {
+        var conversation = JSON.parse(localStorage.getItem("conversation"));
+        this.service.getUserConversationMessages(conversation.FromPhoneNumber, conversation.ToPhoneNumber).subscribe(
+          res => {
+            console.log("Output message details");
+            console.log(res);
+            this.messageList = res;
+            this.messageBody = "";
+            this.scrollTo();
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+
 }
