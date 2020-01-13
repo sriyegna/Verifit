@@ -4,6 +4,7 @@ import { UserService } from '../shared/user.service';
 import { PhoneDetail } from '../shared/phone-detail.model';
 import { ConversationComponent } from '../conversation/conversation.component';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-bronze-panel',
@@ -16,7 +17,28 @@ export class BronzePanelComponent implements OnInit {
   selectedNumber = "Phone Number";
   recipientPhone = "";
   messageBody = "";
-  constructor(private router:Router, private service:UserService, private conversation:ConversationComponent) { }
+  closeResult: string;
+  constructor(private router:Router, private service:UserService, private conversation:ConversationComponent, private modalService: NgbModal) { }
+
+
+  open(content, e) {
+    e.stopPropagation();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'by pressing ESC';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'by clicking on a backdrop';
+    } else {
+      return  `with: ${reason}`;
+    }
+  }
 
   getPhoneNumberList(string) {
     this.service.getUsersNumbers(this.userDetails.UserName).subscribe(
@@ -124,7 +146,8 @@ export class BronzePanelComponent implements OnInit {
     );
   }
 
-  deleteConversation(conversation, e) {
+  deleteConversation(conversation, e, modal) {
+    modal.close('Save click');
     console.log("Outputting conversation");
     console.log(conversation);
     e.stopPropagation();
@@ -140,6 +163,7 @@ export class BronzePanelComponent implements OnInit {
 
   dontPropogate(e) {
     e.stopPropagation();
+    console.log("stopped prop");
   }
   
 

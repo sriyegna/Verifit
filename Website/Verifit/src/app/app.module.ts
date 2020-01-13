@@ -9,6 +9,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgxPageScrollCoreModule } from 'ngx-page-scroll-core';
 import { NgxPageScrollModule } from 'ngx-page-scroll';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UserComponent } from './user/user.component';
@@ -53,7 +55,8 @@ import { NavbarComponent } from './navbar/navbar.component';
       progressBar: true
     }),
     NgxPageScrollCoreModule,
-    NgxPageScrollModule
+    NgxPageScrollModule,
+    NgbModule
   ],
   providers: [UserService,
   {
