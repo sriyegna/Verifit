@@ -18,8 +18,19 @@ export class BronzePanelComponent implements OnInit {
   recipientPhone = "";
   messageBody = "";
   closeResult: string;
+  newNameField: string;
+
   constructor(private router:Router, private service:UserService, private conversation:ConversationComponent, private modalService: NgbModal) { }
 
+
+  rename(content, e) {
+    e.stopPropagation();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-rename'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
 
   open(content, e) {
     e.stopPropagation();
@@ -152,6 +163,20 @@ export class BronzePanelComponent implements OnInit {
     console.log(conversation);
     e.stopPropagation();
     this.service.deleteConversation(conversation).subscribe(
+      res => {
+        this.service.populateConversations()
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+
+  renameConversation(conversation, e, modal) {
+    modal.close('Save click');
+    conversation.ConversationName = this.newNameField;
+    e.stopPropagation();
+    this.service.renameConversation(conversation).subscribe(
       res => {
         this.service.populateConversations()
       },

@@ -18,12 +18,12 @@ namespace VerifitServer.Controllers
     public class ConversationDetailsController : ControllerBase
     {
         private readonly ConversationDetailContext _context;
-        private readonly MessageDetailContext _mcontext;
+        private readonly MessageDetailContext _messageContext;
 
-        public ConversationDetailsController(ConversationDetailContext context, MessageDetailContext mcontext)
+        public ConversationDetailsController(ConversationDetailContext context, MessageDetailContext messageContext)
         {
             _context = context;
-            _mcontext = mcontext;
+            _messageContext = messageContext;
         }
 
         // GET: api/ConversationDetails
@@ -105,14 +105,48 @@ namespace VerifitServer.Controllers
         [Route("DeleteConversation")]
         public async Task<ActionResult<ConversationDetail>> DeleteConversation(ConversationDetail conversation)
         {
-            var conversationDetail = await _context.ConversationDetails.FindAsync(conversation.ConversationId);
+            ConversationDetail conversationDetail = await _context.ConversationDetails.FindAsync(conversation.ConversationId);
 
             if (conversationDetail == null)
             {
                 return NotFound();
             }
 
+            //Delete all pertinent messages
+            Debug.WriteLine(conversationDetail.FromPhoneNumber);
+            Debug.WriteLine(conversationDetail.ToPhoneNumber);
+            var messageDetails = await _messageContext.MessageDetails.Where(a =>
+            (((a.FromPhoneNumber == conversationDetail.FromPhoneNumber) && (a.ToPhoneNumber == conversationDetail.ToPhoneNumber) && (a.Direction == "outbound-api")) ||
+            ((a.FromPhoneNumber == conversationDetail.ToPhoneNumber) && (a.ToPhoneNumber == conversationDetail.FromPhoneNumber) && (a.Direction == "inbound")))
+            ).ToListAsync();
+
+            foreach (MessageDetail message in messageDetails)
+            {
+                _messageContext.MessageDetails.Remove(message);
+            }
+            await _messageContext.SaveChangesAsync();
+            //End Delete all pertinent messages
+
+
             _context.ConversationDetails.Remove(conversationDetail);
+            await _context.SaveChangesAsync();
+
+            return conversationDetail;
+        }
+
+        [HttpPost]
+        [Route("RenameConversation")]
+        public async Task<ActionResult<ConversationDetail>> RenameConversation(ConversationDetail conversation)
+        {
+            ConversationDetail conversationDetail = await _context.ConversationDetails.FindAsync(conversation.ConversationId);
+            conversationDetail.ConversationName = conversation.ConversationName;
+
+            if (conversationDetail == null)
+            {
+                return NotFound();
+            }
+
+           _context.ConversationDetails.Update(conversationDetail);
             await _context.SaveChangesAsync();
 
             return conversationDetail;

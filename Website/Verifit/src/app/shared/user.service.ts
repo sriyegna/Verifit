@@ -204,6 +204,19 @@ export class UserService {
     return this.http.post(this.BaseURI + '/ConversationDetails/DeleteConversation', reqObj);
   }
 
+  renameConversation(conversation) {
+    let reqObj: ConversationDetail;
+    reqObj = {
+      ConversationId: conversation.ConversationId,
+      ConversationName: conversation.ConversationName,
+      FromPhoneNumber: conversation.FromPhoneNumber,
+      ToPhoneNumber: conversation.ToPhoneNumber,
+      LastMessage: conversation.LastMessage,
+      LastMessageTime: conversation.LastMessageTime
+    };
+    return this.http.post(this.BaseURI + '/ConversationDetails/RenameConversation', reqObj);
+  }
+
   deleteMessage(message) {
     let reqObj: MessageDetail;
     reqObj = {
