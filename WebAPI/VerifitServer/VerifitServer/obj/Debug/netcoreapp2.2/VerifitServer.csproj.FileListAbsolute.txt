@@ -14,3 +14,19 @@ C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\VerifitSer
 C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.RazorTargetAssemblyInfo.cache
 C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.dll
 C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.pdb
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\appsettings.Development.json
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\appsettings.json
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\Properties\launchSettings.json
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\VerifitServer.deps.json
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\VerifitServer.runtimeconfig.json
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\VerifitServer.runtimeconfig.dev.json
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\VerifitServer.dll
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\bin\Debug\netcoreapp2.2\VerifitServer.pdb
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.csprojAssemblyReference.cache
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.RazorAssemblyInfo.cache
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.RazorAssemblyInfo.cs
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.AssemblyInfoInputs.cache
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.AssemblyInfo.cs
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.RazorTargetAssemblyInfo.cache
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.dll
+C:\Verifit - Copy\WebAPI\VerifitServer\VerifitServer\obj\Debug\netcoreapp2.2\VerifitServer.pdb
