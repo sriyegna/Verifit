@@ -1,0 +1,16 @@
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\appsettings.Development.json
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\appsettings.json
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\Properties\launchSettings.json
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.deps.json
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.runtimeconfig.json
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.runtimeconfig.dev.json
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.dll
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.pdb
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.csprojAssemblyReference.cache
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorAssemblyInfo.cache
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorAssemblyInfo.cs
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.AssemblyInfoInputs.cache
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.AssemblyInfo.cs
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorTargetAssemblyInfo.cache
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.dll
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.pdb
