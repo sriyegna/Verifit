@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/2e405d82-3ccd-44b7-b0a8-25bc2f15bb82/resourceGroups/cloud-shell-storage-eastus/providers/Microsoft.Web/sites/Multiphone",
+    "appService.deploySubpath": "dist\\Verifit"
+}

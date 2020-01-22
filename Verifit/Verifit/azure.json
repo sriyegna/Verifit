@@ -1,0 +1,17 @@
+{
+  "hosting": [
+    {
+      "app": {
+        "project": "Verifit",
+        "target": "build",
+        "configuration": "production",
+        "path": "dist/Verifit"
+      },
+      "azureHosting": {
+        "subscription": "2e405d82-3ccd-44b7-b0a8-25bc2f15bb82",
+        "resourceGroupName": "Verifit-static-deploy27",
+        "account": "verifitstatic"
+      }
+    }
+  ]
+}

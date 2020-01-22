@@ -1,0 +1,27 @@
+<app-navbar></app-navbar>
+<div class="mt-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Country</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Forwarding Number</th>
+                <th scope="col">Change Forwarding Number</th>
+                <th scope="col">Release Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let phone of service.userPhoneNumbers">
+                <td>
+                    {{phone.country}}
+                </td>
+                <td>
+                    {{phone.phoneNumber}}
+                </td>
+                <td>
+                    {{phone.forwardingNumber}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

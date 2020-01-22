@@ -28,6 +28,10 @@ namespace VerifitServer.Migrations.PhoneDetail
                         .IsRequired()
                         .HasColumnType("nvarchar(3)");
 
+                    b.Property<string>("ForwardingNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
@@ -67,21 +71,13 @@ namespace VerifitServer.Migrations.PhoneDetail
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("TimeCreated")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("TimeSent")
+                    b.Property<string>("Time")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ToPhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("MessageSid");
 

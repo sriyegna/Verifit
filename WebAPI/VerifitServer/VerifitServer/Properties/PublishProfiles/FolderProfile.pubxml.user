@@ -6,6 +6,14 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\publish\Verifit</_PublishTargetUrl>
+    <_PublishTargetUrl>C:\inetpub\wwwroot\Verifit</_PublishTargetUrl>
   </PropertyGroup>
+  <ItemGroup>
+    <DestinationConnectionStrings Include="DevConnection">
+      <Value>Server=%28local%29\sqlexpress%3b Database=PhoneDetailDB%3b Trusted_Connection=True%3b MultipleActiveResultSets=True</Value>
+    </DestinationConnectionStrings>
+    <DestinationConnectionStrings Include="IdentityConnection">
+      <Value>Server=%28local%29\sqlexpress%3b Database=verifitUserDB%3b Trusted_Connection=True%3b MultipleActiveResultSets=True</Value>
+    </DestinationConnectionStrings>
+  </ItemGroup>
 </Project>

@@ -18,13 +18,15 @@ namespace VerifitServer
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args)
+                .UseContentRoot(Directory.GetCurrentDirectory()).UseIISIntegration().Build().Run();
 
         }
 
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            .UseStartup<Startup>()
+            .UseUrls("http://*:80", "https://*:4440");
     }
 }

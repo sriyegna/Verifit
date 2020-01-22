@@ -38,18 +38,7 @@ namespace VerifitServer
 
             //Inject AppSettings Configuration
             services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(options =>
-                {
-                    var resolver = options.SerializerSettings.ContractResolver;
-                    if (resolver != null)
-                    {
-                        (resolver as DefaultContractResolver).NamingStrategy = null;
-                    }
-                })
-                .AddControllersAsServices();
-
-
+            
             //PhoneDb
 
             services.AddDbContext<PhoneDetailContext>(options =>
@@ -63,8 +52,6 @@ namespace VerifitServer
 
 
             //Identity
-
-
             services.AddDbContext<AuthenticationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("IdentityConnection"))
                 );
@@ -83,7 +70,14 @@ namespace VerifitServer
             }
             );
 
-            services.AddCors();
+            services.AddHttpsRedirection(options => options.HttpsPort = 4440);
+
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
 
             //JWT Auth
             var key = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:JWT_Secret"].ToString());
@@ -105,6 +99,9 @@ namespace VerifitServer
                 ClockSkew = TimeSpan.Zero
             };
             });
+
+            services.AddMvc()
+                .AddControllersAsServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -115,9 +112,24 @@ namespace VerifitServer
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(builder =>
-            builder.WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
+
+            app.UseCors("MyPolicy");
+
+            /*app.UseCors(builder =>
+            builder
+            .AllowAnyOrigin()
             .AllowAnyHeader().AllowAnyMethod());
+            */
+
+            /*
+            app.UseCors(builder =>
+            builder
+            .WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
+            .WithOrigins(Configuration["ApplicationSettings:Client_URL2"].ToString())
+            .AllowAnyHeader().AllowAnyMethod());
+            */
+
+            app.UseHttpsRedirection();
 
             app.UseAuthentication();
 

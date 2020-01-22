@@ -28,5 +28,8 @@ namespace PhoneAPI.Models
         [Column(TypeName = ("nvarchar(3)"))]
         [Required]
         public string Country { get; set; }
+        [Column(TypeName = ("nvarchar(20)"))]
+        [Required]
+        public string ForwardingNumber { get; set; }
     }
 }
