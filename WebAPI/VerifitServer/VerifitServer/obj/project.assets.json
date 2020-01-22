@@ -13148,11 +13148,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Verifit\\WebAPI\\VerifitServer\\VerifitServer\\VerifitServer.csproj",
+      "projectUniqueName": "C:\\Verifit - Copy\\WebAPI\\VerifitServer\\VerifitServer\\VerifitServer.csproj",
       "projectName": "VerifitServer",
-      "projectPath": "C:\\Verifit\\WebAPI\\VerifitServer\\VerifitServer\\VerifitServer.csproj",
+      "projectPath": "C:\\Verifit - Copy\\WebAPI\\VerifitServer\\VerifitServer\\VerifitServer.csproj",
       "packagesPath": "C:\\Users\\Sri\\.nuget\\packages\\",
-      "outputPath": "C:\\Verifit\\WebAPI\\VerifitServer\\VerifitServer\\obj\\",
+      "outputPath": "C:\\Verifit - Copy\\WebAPI\\VerifitServer\\VerifitServer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
