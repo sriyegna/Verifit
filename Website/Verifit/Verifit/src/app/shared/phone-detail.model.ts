@@ -5,4 +5,5 @@ export class PhoneDetail {
     TimeCreated: string;
     TimeExpired: string;
     Country: string;
+    ForwardingNumber: string;
 }

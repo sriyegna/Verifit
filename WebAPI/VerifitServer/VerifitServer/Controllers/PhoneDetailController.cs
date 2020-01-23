@@ -274,6 +274,39 @@ namespace VerifitServer.Controllers
             return CreatedAtAction("GetPhoneDetail", new { id = phoneDetail.PhoneSid }, phoneDetail);
         }
 
+        // POST: api/PhoneDetails
+        [HttpPost]
+        [Route("ReleaseNumber")]
+        public async Task<ActionResult<PhoneDetail>> ReleaseNumber(string phoneSid)
+        {
+
+            TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
+
+            IncomingPhoneNumberResource.Delete(pathSid: phoneSid);
+
+            //Remove from context
+            var newResult = await _context.PhoneDetails.Where(a => (a.PhoneSid == phoneSid)).FirstAsync();
+            _context.PhoneDetails.Remove(newResult);
+            await _context.SaveChangesAsync();
+
+            return Ok("Deleted Number");
+        }
+
+        // POST: api/PhoneDetails
+        [HttpPost]
+        [Route("ChangeForwardingNumber")]
+        public async Task<ActionResult<PhoneDetail>> ChangeForwardingNumber(PhoneDetail phone)
+        {
+
+            //Add Forwarding Number
+            PhoneDetail newResult = await _context.PhoneDetails.Where(a => (a.PhoneSid == phone.PhoneSid)).FirstAsync();
+            newResult.ForwardingNumber = phone.ForwardingNumber;
+            _context.PhoneDetails.Update(newResult);
+            await _context.SaveChangesAsync();
+
+            return Ok("Deleted Number");
+        }
+
 
 
         // DELETE: api/PhoneDetails/5

@@ -116,7 +116,8 @@ export class UserService {
       PhoneSid: 'null',
       PhoneNumber: 'null',
       TimeCreated: 'null',
-      TimeExpired: 'null'
+      TimeExpired: 'null',
+      ForwardingNumber: 'null'
     }
     return this.http.post(this.BaseURI + '/PhoneDetail/RequestUsNumber', reqObj);
   }
@@ -130,7 +131,8 @@ export class UserService {
       PhoneSid: 'null',
       PhoneNumber: 'null',
       TimeCreated: 'null',
-      TimeExpired: 'null'
+      TimeExpired: 'null',
+      ForwardingNumber: 'null'
     }
     //return this.http.get(this.BaseURI + '/PhoneDetail/RequestUsNumber/' + username);
     return this.http.post(this.BaseURI + '/PhoneDetail/RequestCanNumber', reqObj);
@@ -233,6 +235,24 @@ export class UserService {
       ToPhoneNumber: 'null'
     }
     return this.http.post(this.BaseURI + '/MessageDetails/DeleteMessage', reqObj);
+  }
+
+  releaseNumber(phone) {
+    return this.http.post(this.BaseURI + "/PhoneDetail/ReleaseNumber", phone.PhoneSid);
+  }
+
+  changeForwardingNumber(phone, forwardingNumber) {
+    let reqObj: PhoneDetail;
+    
+    reqObj = {
+      UserName: phone.UserName,
+      PhoneSid: phone.PhoneSid,
+      PhoneNumber: 'null',
+      TimeCreated: 'null',
+      TimeExpired: 'null',
+      Country: 'null',
+      ForwardingNumber: forwardingNumber
+    };
   }
 
 }
