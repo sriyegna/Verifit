@@ -28,6 +28,7 @@ import { ConversationComponent } from './conversation/conversation.component';
 import { FrontpageComponent } from './frontpage/frontpage.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { PhoneManagerComponent } from './phone-manager/phone-manager.component';
+import { ContactsComponent } from './contacts/contacts.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { PhoneManagerComponent } from './phone-manager/phone-manager.component';
     ConversationComponent,
     FrontpageComponent,
     NavbarComponent,
-    PhoneManagerComponent
+    PhoneManagerComponent,
+    ContactsComponent
   ],
   imports: [
     BrowserModule,

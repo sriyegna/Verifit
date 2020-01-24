@@ -8,6 +8,7 @@ import { Message } from '@angular/compiler/src/i18n/i18n_ast';
 import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { ConversationDetail } from './conversation-detail.model';
+import { ContactDetail } from './contact-detail.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class UserService {
   readonly NodeURI = 'http://localhost:1234';
 
   phoneNumbers = [];
+  contactList = [];
   conversations;
   selectedNumber = "";
   username = "";
@@ -117,7 +119,7 @@ export class UserService {
       PhoneNumber: 'null',
       TimeCreated: 'null',
       TimeExpired: 'null',
-      ForwardingNumber: 'null'
+      ForwardingNumber: '-'
     }
     return this.http.post(this.BaseURI + '/PhoneDetail/RequestUsNumber', reqObj);
   }
@@ -132,7 +134,7 @@ export class UserService {
       PhoneNumber: 'null',
       TimeCreated: 'null',
       TimeExpired: 'null',
-      ForwardingNumber: 'null'
+      ForwardingNumber: '-'
     }
     //return this.http.get(this.BaseURI + '/PhoneDetail/RequestUsNumber/' + username);
     return this.http.post(this.BaseURI + '/PhoneDetail/RequestCanNumber', reqObj);
@@ -237,22 +239,48 @@ export class UserService {
     return this.http.post(this.BaseURI + '/MessageDetails/DeleteMessage', reqObj);
   }
 
-  releaseNumber(phone) {
-    return this.http.post(this.BaseURI + "/PhoneDetail/ReleaseNumber", phone.PhoneSid);
-  }
-
-  changeForwardingNumber(phone, forwardingNumber) {
+  changeForwardingNumber(phone, newForwardingPhone) {
+    console.log(phone.phoneSid);
     let reqObj: PhoneDetail;
-    
     reqObj = {
-      UserName: phone.UserName,
-      PhoneSid: phone.PhoneSid,
+      UserName: 'null',
+      PhoneSid: phone.phoneSid,
       PhoneNumber: 'null',
       TimeCreated: 'null',
       TimeExpired: 'null',
       Country: 'null',
-      ForwardingNumber: forwardingNumber
-    };
+      ForwardingNumber: newForwardingPhone
+    }
+    return this.http.post(this.BaseURI + '/PhoneDetail/ChangeForwardingNumber', reqObj);
+  }
+
+  releaseNumber(phone) {
+    let reqObj: PhoneDetail;
+    reqObj = {
+      UserName: 'null',
+      PhoneSid: phone.phoneSid,
+      PhoneNumber: 'null',
+      TimeCreated: 'null',
+      TimeExpired: 'null',
+      Country: 'null',
+      ForwardingNumber: 'null'
+    }
+    return this.http.post(this.BaseURI + "/PhoneDetail/ReleaseNumber", reqObj);
+  }
+
+  getUsersContacts() {
+    return this.http.get(this.BaseURI + '/ContactDetails/GetUserContacts/' + this.userDetails.userName);
+  }
+
+  changeContactName(contact, newContactName) {
+    let reqObj: ContactDetail;
+    reqObj = {
+      ContactId: this.userDetails.userName + newContactName + contact.PhoneNumber,
+      UserName: this.userDetails.username,
+      ContactName: newContactName,
+      PhoneNumber: contact.Phonenumber
+    }
+    return this.http.post(this.BaseURI + "/ContactDetails/ChangeContactName", reqObj);
   }
 
 }

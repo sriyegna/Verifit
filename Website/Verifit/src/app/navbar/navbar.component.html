@@ -17,6 +17,9 @@
             <li class="nav-item">
                 <a class="btn btn-primary my-2 mx-3 my-sm-2" routerLink='/bronzepanel' *ngIf="service.userDetails">Phone</a>
             </li>
+            <li class="nav-item">
+                <a class="btn btn-primary my-2 mx-3 my-sm-2" routerLink='/contact-manager' *ngIf="service.userDetails">Contact Manager</a>
+            </li>
         </ul>
 
         <a class="btn btn-danger my-2 mx-3 my-sm-2" (click)="service.onLogout()" *ngIf="service.userDetails">Logout</a>

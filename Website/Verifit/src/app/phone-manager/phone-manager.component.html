@@ -22,10 +22,28 @@
                     {{phone.forwardingNumber}}
                 </td>
                 <td>
-                    <button click="changeForwardNumber(phone)">Change forwarding Number</button>
+                    <button class="btn btn-secondary" (click)="changeForward(changefwd, $event)">Change Forwarding Number</button>
+                    <!-- Confirm Rename Modal-->
+                    <ng-template #changefwd let-modal>
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="modal-changeForward">Change Forwarding Number</h5>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        <p>What number do you want to forward calls from {{phone.phoneNumber}} to?</p>
+                        <input id="renameField" class="form-control" placeholder="+12345678901" [(ngModel)]="forwardingNumberField">
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" ngbAutofocus (click)="changeForwardingNumber(phone, modal)">Change</button>
+                        <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Close</button>
+                        </div>
+                    </ng-template>
+                    <!-- End Confirm Rename Modal-->
                 </td>
                 <td>
-                    <button click="releaseNumber(phone)">Change forwarding Number</button>
+                    <button (click)="releaseNumber(phone)">Release Number</button>
                 </td>
             </tr>
         </tbody>

@@ -1,0 +1,50 @@
+<app-navbar></app-navbar>
+<div class="mt-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Phone Number</th>
+                <th scope="col">Change Contact Name</th>
+                <th scope="col">Change Contact Number</th>
+                <th scope="col">Delete Contact</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let contact of service.contactList">
+                <td>
+                    {{contact.contactName}}
+                </td>
+                <td>
+                    {{contact.phoneNumber}}
+                </td>
+                <td>
+                    <button class="btn btn-secondary" (click)="changeContactName(changeCtName, $event)">Change Contact Name</button>
+                    <!-- Confirm Rename Modal -->
+                    <ng-template #changeCtName let-modal>
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="modal-changeContactName">Change Contact Name</h5>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        <p>What do you want to change your contact name to?</p>
+                        <input id="renameField" class="form-control" placeholder="Name" [(ngModel)]="newContactName">
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" ngbAutofocus (click)="submitChangeContactName(contact, modal)">Change</button>
+                        <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Close</button>
+                        </div>
+                    </ng-template>
+                     <!-- End Confirm Rename Modal-->
+                     test
+                </td>
+                <td>
+                    test
+                    <!--  <button (click)="releaseNumber(phone)">Release Number</button> -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

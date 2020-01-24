@@ -13,6 +13,7 @@ import { GoldPanelComponent } from './gold-panel/gold-panel.component';
 import { ConversationComponent } from './conversation/conversation.component';
 import { FrontpageComponent } from './frontpage/frontpage.component';
 import { PhoneManagerComponent } from './phone-manager/phone-manager.component';
+import { ContactsComponent } from './contacts/contacts.component';
 
 
 const routes: Routes = [
@@ -29,6 +30,7 @@ const routes: Routes = [
   {path:'adminpanel', component:AdminPanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Admin']}},
   {path:'bronzepanel', component:BronzePanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Bronze']}},
   {path:'phone-manager', component:PhoneManagerComponent, canActivate:[AuthGuard], data: {permittedRoles:['Bronze']}},
+  {path:'contact-manager', component:ContactsComponent, canActivate:[AuthGuard], data: {permittedRoles:['Bronze']}},
   //{path:'silverpanel', component:SilverPanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Silver']}},
   {path:'goldpanel', component:GoldPanelComponent, canActivate:[AuthGuard], data: {permittedRoles:['Gold']}},
   {path:'conversation', component:ConversationComponent}
