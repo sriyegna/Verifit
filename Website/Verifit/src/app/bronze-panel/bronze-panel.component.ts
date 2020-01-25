@@ -5,6 +5,7 @@ import { PhoneDetail } from '../shared/phone-detail.model';
 import { ConversationComponent } from '../conversation/conversation.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ContactDetail } from '../shared/contact-detail.model';
 
 @Component({
   selector: 'app-bronze-panel',
@@ -15,6 +16,7 @@ export class BronzePanelComponent implements OnInit {
 
   userDetails;
   selectedNumber = "Phone Number";
+  selectedContact;
   recipientPhone = "";
   messageBody = "";
   closeResult: string;
@@ -22,14 +24,27 @@ export class BronzePanelComponent implements OnInit {
 
   constructor(private router:Router, public service:UserService, private conversation:ConversationComponent, private modalService: NgbModal) { }
 
+  ngOnInit() {
+    this.service.getUserProfile().subscribe(
+      res => {
+        this.userDetails = res;
+        var payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
+        this.userDetails.role = payLoad.role;
+        this.service.username = this.userDetails.userName;
+        this.service.userDetails = this.userDetails;
 
-  rename(content, e) {
-    e.stopPropagation();
-    this.modalService.open(content, {ariaLabelledBy: 'modal-rename'}).result.then((result) => {
-      this.closeResult = `Closed with: ${result}`;
-    }, (reason) => {
-      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-    });
+        this.getPhoneNumberList("init");
+        this.getContactList();
+
+        if (localStorage.getItem("selectedNumber") != null) {
+          this.selectedNumber = localStorage.getItem("selectedNumber");
+          this.service.populateConversations()
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
   open(content, e) {
@@ -40,6 +55,17 @@ export class BronzePanelComponent implements OnInit {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
+
+  
+  rename(content, e) {
+    e.stopPropagation();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-rename'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
 
   private getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
@@ -55,8 +81,6 @@ export class BronzePanelComponent implements OnInit {
     this.service.getUsersNumbers(this.userDetails.userName).subscribe(
       res => {
         this.service.userPhoneNumbers = res;
-        console.log("Outputting phone numbers");
-        console.log(res);
         this.service.phoneNumbers = [];
         let array = res as Array<PhoneDetail>;
         for (let element of array) {
@@ -64,30 +88,6 @@ export class BronzePanelComponent implements OnInit {
         }
         if (string == "init" && this.service.phoneNumbers.length > 0) {
           this.service.selectedNumber = this.service.phoneNumbers[0];
-        }
-        console.log(this.service.selectedNumber);
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-
-  ngOnInit() {
-    this.service.getUserProfile().subscribe(
-      res => {
-        this.userDetails = res;
-        var payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
-        this.userDetails.role = payLoad.role;
-        this.service.username = this.userDetails.userName;
-        this.service.userDetails = this.userDetails;
-
-        this.getPhoneNumberList("init");
-
-        if (localStorage.getItem("selectedNumber") != null) {
-          console.log("Getting " + localStorage.getItem("selectedNumber"));
-          this.selectedNumber = localStorage.getItem("selectedNumber");
-          this.service.populateConversations()
         }
       },
       err => {
@@ -97,10 +97,8 @@ export class BronzePanelComponent implements OnInit {
   }
 
   requestUSNumber() {
-    console.log("Req usnum" + this.userDetails.userName);
     this.service.requestUSNumber(this.userDetails.userName).subscribe(
       res => {
-        console.log(res);
         this.getPhoneNumberList("");
       },
       err => {
@@ -112,9 +110,6 @@ export class BronzePanelComponent implements OnInit {
   requestCANumber() {
     this.service.requestCANumber(this.userDetails.userName).subscribe(
       res => {
-        console.log("reqCanum");
-        console.log(res);
-        console.log("reqCanum");
         this.getPhoneNumberList("");
       },
       err => {
@@ -125,7 +120,6 @@ export class BronzePanelComponent implements OnInit {
 
 
   callFn(phoneNumber) {
-    console.log("Saving" + phoneNumber);
     localStorage.setItem("selectedNumber", phoneNumber);
     this.service.selectedNumber = phoneNumber;
     this.selectedNumber = phoneNumber;
@@ -133,7 +127,6 @@ export class BronzePanelComponent implements OnInit {
   }
 
   clickConversation(conversation) {
-    console.log(conversation);
     this.service.userSelectedConversation = conversation;
     this.conversation.userSelectedConversation = conversation;
     localStorage.setItem("conversation", JSON.stringify(conversation));
@@ -141,18 +134,10 @@ export class BronzePanelComponent implements OnInit {
   }
 
   sendMessage() {
-    console.log(this.messageBody)
     this.service.sendMessage(this.messageBody, this.selectedNumber, this.recipientPhone).subscribe(
       res => {
-        console.log("Return from new sendmessage");
-        console.log(res);
         this.messageBody = "";
         this.recipientPhone = "";
-        //let element = document.getElementById('exampleModal');
-        //element.className = "modal fade close";
-        
-        
-        //***Update conversations after message is sent
 
       }
     );
@@ -200,8 +185,54 @@ export class BronzePanelComponent implements OnInit {
 
   dontPropogate(e) {
     e.stopPropagation();
-    console.log("stopped prop");
+  }
+
+  getContactList() {
+    this.service.getUsersContacts().subscribe(
+      res => {
+        this.service.contactList = [];
+        let array = res as Array<ContactDetail>;
+        for (let element of array) {
+          this.service.contactList.push(element);
+        }
+        if (this.service.contactList.length > 0) {
+          this.selectedContact = this.service.contactList[0];
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+
+  conversationHasContactName(conversation) {
+    console.log("convo has contact");
+    console.log(conversation);
+    if (conversation.contactName == 'null' || conversation.contactName == '' || conversation.contactName == undefined) {
+      return false;
+    }
+    return true;
+  }
+
+  conversationHasConversationName(conversation) {
+    if (conversation.conversationName == 'null' || conversation.conversationName == '' || conversation.conversationName == undefined) {
+      return false;
+    }
+    return true;
+  }
+
+  contact(content, e) {
+    e.stopPropagation();
+    this.modalService.open(content, {ariaLabelledBy: 'lookupContact'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
   }
   
+  contactSelected(contact) {
+    this.selectedContact = contact;
+    this.recipientPhone = contact.phoneNumber;
+  }
 
 }

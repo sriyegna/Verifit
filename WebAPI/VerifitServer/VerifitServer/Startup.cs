@@ -50,6 +50,9 @@ namespace VerifitServer
             services.AddDbContext<MessageDetailContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
 
+            services.AddDbContext<ContactDetailContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+
 
             //Identity
             services.AddDbContext<AuthenticationContext>(options =>

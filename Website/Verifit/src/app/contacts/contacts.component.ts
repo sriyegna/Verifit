@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { ContactDetail } from '../shared/contact-detail.model';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { ObjectUnsubscribedError } from 'rxjs';
 
 @Component({
   selector: 'app-contacts',
@@ -11,13 +12,29 @@ import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 export class ContactsComponent implements OnInit {
 
   closeResult;
+  userDetails;
   newContactName: string;
+  newContactNumber: string;
+  addContactName: string;
+  addContactNumber: string;
   
   constructor(public service: UserService, private modalService:NgbModal) { }
 
   ngOnInit() {
-    //load contacts
-    this.getContactList();
+    this.service.getUserProfile().subscribe(
+      res => {
+        this.userDetails = res;
+        var payLoad = JSON.parse(window.atob(localStorage.getItem('token').split('.')[1]));
+        this.userDetails.role = payLoad.role;
+        this.service.username = this.userDetails.userName;
+        this.service.userDetails = this.userDetails;
+
+        this.getContactList();
+      },
+      err => {
+        console.log(err);
+      }
+    );
 
   }
 
@@ -48,12 +65,59 @@ export class ContactsComponent implements OnInit {
   }
 
   submitChangeContactName(contact, modal) {
-    modal.close('Save click');
-    console.log("Changing num");    
+    modal.close('Save click'); 
     this.service.changeContactName(contact, this.newContactName).subscribe(
       res => {
-        console.log(res);
-        console.log("Forwarding number changed");
+        this.getContactList();
+        console.log("Changed contact name");
+      },
+      err => {
+        console.log(err);
+      
+      }
+    );
+  }
+
+  changeContactNumber(content, e) {
+    e.stopPropagation();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-changeContactNumber'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  submitChangeContactNumber(contact, modal) {
+    modal.close('Save click');
+    console.log("Changing num");    
+    this.service.changeContactNumber(contact, this.newContactNumber).subscribe(
+      res => {
+        this.getContactList();
+        console.log("Changed contact number");
+      },
+      err => {
+        console.log(err);
+      
+      }
+    );
+  }
+
+  deleteContact(content, e) {
+    e.stopPropagation();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-changeContactNumber'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  submitDeleteContact(contact, modal) {
+    modal.close('Save click');
+    console.log("Deleting contact");    
+    this.service.deleteContact(contact).subscribe(
+      res => {
+        this.getContactList();
+        console.log("Delete contact");
       },
       err => {
         console.log(err);
@@ -79,6 +143,18 @@ export class ContactsComponent implements OnInit {
     } else {
       return  `with: ${reason}`;
     }
+  }
+
+  addContact() {
+    this.service.addContact(this.addContactName, this.addContactNumber).subscribe(
+      res => {
+        console.log("added contact");
+        this.getContactList();
+      },
+      err => {
+        console.log(err);
+      }
+    )
   }
 
 }

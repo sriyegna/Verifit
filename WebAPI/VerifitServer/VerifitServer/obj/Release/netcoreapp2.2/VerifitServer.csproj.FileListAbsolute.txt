@@ -14,6 +14,12 @@ C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitS
 C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorTargetAssemblyInfo.cache
 C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.dll
 C:\Verifit\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.pdb
+C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.csprojAssemblyReference.cache
+C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorAssemblyInfo.cache
+C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorAssemblyInfo.cs
+C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.AssemblyInfoInputs.cache
+C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.AssemblyInfo.cs
+C:\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\web.config
 C:\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\appsettings.Development.json
 C:\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\appsettings.json
 C:\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\Properties\launchSettings.json
@@ -22,11 +28,7 @@ C:\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.ru
 C:\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.runtimeconfig.dev.json
 C:\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.dll
 C:\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\VerifitServer.pdb
-C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.csprojAssemblyReference.cache
-C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorAssemblyInfo.cache
-C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorAssemblyInfo.cs
-C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.AssemblyInfoInputs.cache
-C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.AssemblyInfo.cs
 C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.RazorTargetAssemblyInfo.cache
 C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.dll
 C:\WebAPI\VerifitServer\VerifitServer\obj\Release\netcoreapp2.2\VerifitServer.pdb
+C:\Verifit\WebAPI\VerifitServer\VerifitServer\bin\Release\netcoreapp2.2\web.config

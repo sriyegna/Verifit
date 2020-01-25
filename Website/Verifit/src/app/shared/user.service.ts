@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { ConversationDetail } from './conversation-detail.model';
 import { ContactDetail } from './contact-detail.model';
+import * as uuid from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,8 @@ export class UserService {
 
   constructor(private fb:FormBuilder, private http:HttpClient, private router:Router) { }
   readonly BaseURI = 'https://api.multiph.one:4440/api';
-  readonly NodeURI = 'http://localhost:1234';
-
+  //readonly BaseURI = 'http://45.77.155.37/api';
+  
   phoneNumbers = [];
   contactList = [];
   conversations;
@@ -151,19 +152,27 @@ export class UserService {
   }
 
   populateConversations() {
-    console.log("Conversation Panel Loaded");
     var selectedNumber = localStorage.getItem("selectedNumber");
-    console.log(selectedNumber);
     if (selectedNumber != null) {
       this.getUsersConversations(selectedNumber).subscribe(
         res => {
-          console.log(res);
           this.conversations = res;
+          this.determineConversationContacts();
         },
         err => {
           console.log(err);
         }
       );
+    }
+  }
+
+  determineConversationContacts() {
+    for (let conversation of this.conversations) {
+      for (let contact of this.contactList) {
+        if (conversation.toPhoneNumber == contact.phoneNumber) {
+          conversation.ContactName = contact.contactName;
+        }
+      }
     }
   }
 
@@ -188,8 +197,6 @@ export class UserService {
       FromPhoneNumber: fromPhoneNumber,  
       ToPhoneNumber: toPhoneNumber
     }
-    console.log("Finally sending message");
-    console.log(reqObj);
     return this.http.post(this.BaseURI + '/MessageDetails/SendMessage', reqObj);
   }
 
@@ -205,6 +212,7 @@ export class UserService {
     reqObj = {
       ConversationId: conversation.ConversationId,
       ConversationName: 'null',
+      ContactName: 'null',
       FromPhoneNumber: conversation.FromPhoneNumber,
       ToPhoneNumber: conversation.ToPhoneNumber,
       LastMessage: conversation.LastMessage,
@@ -218,6 +226,7 @@ export class UserService {
     reqObj = {
       ConversationId: conversation.ConversationId,
       ConversationName: conversation.ConversationName,
+      ContactName: 'null',
       FromPhoneNumber: conversation.FromPhoneNumber,
       ToPhoneNumber: conversation.ToPhoneNumber,
       LastMessage: conversation.LastMessage,
@@ -240,7 +249,6 @@ export class UserService {
   }
 
   changeForwardingNumber(phone, newForwardingPhone) {
-    console.log(phone.phoneSid);
     let reqObj: PhoneDetail;
     reqObj = {
       UserName: 'null',
@@ -275,12 +283,45 @@ export class UserService {
   changeContactName(contact, newContactName) {
     let reqObj: ContactDetail;
     reqObj = {
-      ContactId: this.userDetails.userName + newContactName + contact.PhoneNumber,
-      UserName: this.userDetails.username,
+      ContactId: contact.contactId,
+      UserName: 'null',
       ContactName: newContactName,
-      PhoneNumber: contact.Phonenumber
+      PhoneNumber: 'null'
     }
     return this.http.post(this.BaseURI + "/ContactDetails/ChangeContactName", reqObj);
+  }
+
+  changeContactNumber(contact, newContactNumber) {
+    let reqObj: ContactDetail;
+    reqObj = {
+      ContactId: contact.contactId,
+      UserName: 'null',
+      ContactName: 'null',
+      PhoneNumber: newContactNumber
+    }
+    return this.http.post(this.BaseURI + "/ContactDetails/ChangeContactNumber", reqObj);
+  }
+
+  deleteContact(contact) {
+    let reqObj: ContactDetail;
+    reqObj = {
+      ContactId: contact.contactId,
+      UserName: 'null',
+      ContactName: 'null',
+      PhoneNumber: 'null'
+    }
+    return this.http.post(this.BaseURI + "/ContactDetails/DeleteContact", reqObj);
+  }
+  
+  addContact(addContactName, addContactNumber) {
+    let reqObj: ContactDetail;
+    reqObj = {
+      ContactId: uuid.v4(),
+      UserName: this.userDetails.userName,
+      ContactName: addContactName,
+      PhoneNumber: addContactNumber
+    }
+    return this.http.post(this.BaseURI + "/ContactDetails/AddContact", reqObj);
   }
 
 }

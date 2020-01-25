@@ -95,7 +95,10 @@
   <div class="col-md-10 mx-auto">
     <div class="mx-auto container" *ngFor="let conversation of service.conversations"  (click)="clickConversation(conversation)">
       <img class="avatar" src="/assets/img/avatar.png" alt="Avatar">
-      <span>{{conversation.conversationName}} - {{conversation.toPhoneNumber}}</span>
+      <span *ngIf="!conversationHasContactName(conversation) && !conversationHasConversationName(conversation)">{{conversation.toPhoneNumber}}</span>
+      <span *ngIf="conversationHasContactName(conversation) && !conversationHasConversationName(conversation)">{{conversation.ContactName}}</span>
+      <span *ngIf="!conversationHasContactName(conversation) && conversationHasConversationName(conversation)">{{conversation.conversationName}} - {{conversation.toPhoneNumber}}</span>
+      <span *ngIf="conversationHasContactName(conversation) && conversationHasConversationName(conversation)">{{conversation.conversationName}} - {{conversation.ContactName}}</span>
       <button class="btn btn-danger btn-circle btn-circle-sm m-1 float-right" (click)="open(content, $event)"><i class="fa fa-times"></i></button>
       <button class="btn btn-secondary btn-circle btn-circle-sm m-1 float-right" (click)="rename(renamecontent, $event)"><i class="fas fa-edit"></i></button>
       <br>
@@ -166,6 +169,31 @@
         <div class="input-group mb-3">
 
           <input type="text" class="form-control" placeholder="+12263364243" aria-label="Recipient's Phone Number" aria-describedby="basic-addon2" [(ngModel)]="recipientPhone">
+          <!-- Contact Lookup Modal -->
+            <button class="btn btn-secondary btn-circle btn-circle-sm m-1 float-right" (click)="contact(lookupContact, $event)"><i class="fas fa-edit"></i></button>
+            <ng-template #lookupContact let-modal>
+              <div class="modal-header">
+                <h5 class="modal-title" id="modal-contact">Lookup Contact</h5>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Select a contact</p>
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownContact" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{selectedContact.contactName}} - {{selectedContact.phoneNumber}}
+                  </button>
+                  <div id="contact-dropdown" class="dropdown-menu" aria-labelledby="dropdownContact">
+                    <div class="dropdown-item" href="#" *ngFor="let contact of service.contactList" (click)="contactSelected(contact)">{{contact.contactName}} - {{contact.phoneNumber}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Close</button>
+              </div>
+            </ng-template>
+          <!-- End Contact Lookup Modal -->
         </div>
 
         <label for="basic-url">Message</label>
@@ -176,8 +204,9 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" (click)="sendMessage()">Send message</button>
+        <button type="button" class="btn btn-primary" (click)="sendMessage()" data-dismiss="modal">Send message</button>
       </div>
     </div>
   </div>
 </div>
+<!-- End Send Modal -->

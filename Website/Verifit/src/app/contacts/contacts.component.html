@@ -38,13 +38,83 @@
                         </div>
                     </ng-template>
                      <!-- End Confirm Rename Modal-->
-                     test
                 </td>
                 <td>
-                    test
-                    <!--  <button (click)="releaseNumber(phone)">Release Number</button> -->
+                    <button class="btn btn-secondary" (click)="changeContactNumber(changeCtNumber, $event)">Change Contact Number</button>
+                    <!-- Confirm Rename Modal -->
+                    <ng-template #changeCtNumber let-modal>
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="modal-changeContactNumber">Change Contact Number</h5>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        <p>What do you want to change your contact number to?</p>
+                        <input id="renameField" class="form-control" placeholder="+12345678901" [(ngModel)]="newContactNumber">
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" ngbAutofocus (click)="submitChangeContactNumber(contact, modal)">Change</button>
+                        <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Close</button>
+                        </div>
+                    </ng-template>
+                     <!-- End Confirm Rename Modal-->
+                </td>
+                <td>
+                    <button class="btn btn-secondary" (click)="deleteContact(deleteNumber, $event)">Delete Contact</button>
+                    <!-- Confirm Rename Modal -->
+                    <ng-template #deleteNumber let-modal>
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="modal-deleteContact">Delete Contact</h5>
+                        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                        <p>Are you sure you want to delete {{contact.contactName}}?</p>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" ngbAutofocus (click)="submitDeleteContact(contact, modal)">Delete</button>
+                        <button type="button" class="btn btn-secondary" (click)="modal.close('Save click')">Close</button>
+                        </div>
+                    </ng-template>
+                     <!-- End Confirm Rename Modal-->
                 </td>
             </tr>
         </tbody>
     </table>
 </div>
+
+<!--- Send button -->
+<button class="btn btn-info btn-circle btn-circle-xl m-1 floating-send" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-paper-plane"></i></button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Contact</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>      
+      <div class="modal-body">
+        <label for="basic-url">Contact Name</label>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Name" aria-label="Recipient's Name" aria-describedby="basic-addon2" [(ngModel)]="addContactName">
+        </div>
+
+        <label for="basic-url">Contact Number</label>
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="+12263364243" aria-label="Recipient's Phone Number" aria-describedby="basic-addon2" [(ngModel)]="addContactNumber">
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" (click)="addContact()" data-dismiss="modal">Send message</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Send Modal -->

@@ -14,6 +14,5 @@ namespace PhoneAPI.Models
 
         }
         public DbSet<PhoneDetail> PhoneDetails { get; set; }
-        public DbSet<VerifitServer.Models.MessageDetail> MessageDetail { get; set; }
     }
 }

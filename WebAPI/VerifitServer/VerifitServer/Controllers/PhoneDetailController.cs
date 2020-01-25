@@ -178,7 +178,7 @@ namespace VerifitServer.Controllers
             request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"phone_number_id\"\r\n\r\n" + purchasedNumberId + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
             response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
 
-            //Add context to group
+            //Add message context to group
             client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/" + purchasedNumberId);
             request = new RestRequest(Method.PUT);
             cancellationTokenSource = new System.Threading.CancellationTokenSource();
@@ -187,6 +187,17 @@ namespace VerifitServer.Controllers
             request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
             request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nVerifitGroup\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_handler\"\r\n\r\nrelay_context\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_relay_context\"\r\n\r\nVerifit\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
             response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
+            //Add call context to group
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/" + purchasedNumberId);
+            request = new RestRequest(Method.PUT);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nVerifitGroup\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"call_handler\"\r\n\r\nrelay_context\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"call_relay_context\"\r\n\r\nVerifit\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
 
             //Save it to model
             phoneDetail.UserName = (phoneDetail.UserName).ToLower();
@@ -247,7 +258,7 @@ namespace VerifitServer.Controllers
             request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"phone_number_id\"\r\n\r\n" + purchasedNumberId + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
             response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
 
-            //Add context to group
+            //Add message context to group
             client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/" + purchasedNumberId);
             request = new RestRequest(Method.PUT);
             cancellationTokenSource = new System.Threading.CancellationTokenSource();
@@ -256,6 +267,17 @@ namespace VerifitServer.Controllers
             request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
             request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nVerifitGroup\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_handler\"\r\n\r\nrelay_context\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"message_relay_context\"\r\n\r\nVerifit\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
             response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
+            //Add call context to group
+            client = new RestClient("https://manish.signalwire.com/api/relay/rest/phone_numbers/" + purchasedNumberId);
+            request = new RestRequest(Method.PUT);
+            cancellationTokenSource = new System.Threading.CancellationTokenSource();
+            request.AddHeader("Authorization", "Basic MjgzNjFlNmMtODViOC00MGY1LWJkZTEtYmZjOGNmNjhhOTZjOlBUNjViZmE3NDc5ZWZkOThjMzhmNTI1ZTdjMzUyMjc3ZTcwYWZmNjNlZjIyZjRlOGJl");
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+            request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"name\"\r\n\r\nVerifitGroup\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"call_handler\"\r\n\r\nrelay_context\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"call_relay_context\"\r\n\r\nVerifit\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+            response = await client.ExecuteTaskAsync(request, cancellationTokenSource.Token);
+
 
             //Save it to model
             Console.WriteLine(phoneDetail.UserName);
@@ -277,19 +299,25 @@ namespace VerifitServer.Controllers
         // POST: api/PhoneDetails
         [HttpPost]
         [Route("ReleaseNumber")]
-        public async Task<ActionResult<PhoneDetail>> ReleaseNumber(string phoneSid)
+        public async Task<ActionResult<PhoneDetail>> ReleaseNumber(PhoneDetail phone)
         {
 
             TwilioClient.Init("28361e6c-85b8-40f5-bde1-bfc8cf68a96c", "PT65bfa7479efd98c38f525e7c352277e70aff63ef22f4e8be", new Dictionary<string, object> { ["signalwireSpaceUrl"] = "manish.signalwire.com" });
-
-            IncomingPhoneNumberResource.Delete(pathSid: phoneSid);
+            try
+            {
+                IncomingPhoneNumberResource.Delete(pathSid: phone.PhoneSid);                            
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine(err);
+            }
 
             //Remove from context
-            var newResult = await _context.PhoneDetails.Where(a => (a.PhoneSid == phoneSid)).FirstAsync();
+            var newResult = await _context.PhoneDetails.Where(a => (a.PhoneSid == phone.PhoneSid)).FirstAsync();
             _context.PhoneDetails.Remove(newResult);
             await _context.SaveChangesAsync();
 
-            return Ok("Deleted Number");
+            return Ok();
         }
 
         // POST: api/PhoneDetails
@@ -304,7 +332,7 @@ namespace VerifitServer.Controllers
             _context.PhoneDetails.Update(newResult);
             await _context.SaveChangesAsync();
 
-            return Ok("Deleted Number");
+            return Ok();
         }
 
 
