@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { PhoneDetail } from '../shared/phone-detail.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-phone-manager',
@@ -13,7 +14,9 @@ export class PhoneManagerComponent implements OnInit {
   userDetails;
   forwardingNumberField: string;
   closeResult: string;
-  constructor(public service:UserService, private modalService:NgbModal) { }
+  changeNumberValid: boolean;
+
+  constructor(public service:UserService, private modalService:NgbModal, private toastr:ToastrService) { }
 
   ngOnInit() {
     this.service.getUserProfile().subscribe(
@@ -36,14 +39,11 @@ export class PhoneManagerComponent implements OnInit {
     this.service.getUsersNumbers(this.userDetails.userName).subscribe(
       res => {
         this.service.userPhoneNumbers = res;
-        console.log("Outputting phone numbers");
-        console.log(res);
         this.service.phoneNumbers = [];
         let array = res as Array<PhoneDetail>;
         for (let element of array) {
           this.service.phoneNumbers.push(element.PhoneNumber);
         }
-        console.log(this.service.selectedNumber);
       },
       err => {
         console.log(err);
@@ -80,34 +80,84 @@ export class PhoneManagerComponent implements OnInit {
     }
   }
 
-  releaseNumber(phone) {
-    console.log("in PH component");
-    console.log(phone);
+  release(content, e) {
+    e.stopPropagation();
+    this.modalService.open(content, {ariaLabelledBy: 'modal-release'}).result.then((result) => {
+      this.closeResult = `Closed with: ${result}`;
+    }, (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    });
+  }
+
+  releaseNumber(phone, modal) {
+    modal.close('Save click');
     this.service.releaseNumber(phone).subscribe(
       res => {
-        console.log("Number released");
         this.getPhoneNumberList("");
+        this.toastr.success("Number " + phone.phoneNumber + " has been released.");
       },
       err => {
         console.log(err);
+        this.toastr.error("Error: " + err);
       }
     )
   }
 
   changeForwardingNumber(phone, modal) {
-    modal.close('Save click');
-    console.log("Changing num");    
-    this.service.changeForwardingNumber(phone, this.forwardingNumberField).subscribe(
+    if (this.changeNumberValid) {
+      modal.close('Save click');
+      this.service.changeForwardingNumber(phone, this.forwardingNumberField).subscribe(
+        res => {
+          this.getPhoneNumberList("");
+          this.toastr.success("Forwarding number for " + phone.phoneNumber + "changed to: " + this.forwardingNumberField);
+        },
+        err => {
+          console.log(err);
+          this.toastr.error("Error: " + err);
+        
+        }
+      );
+    }
+    else {
+      this.toastr.error("Number is not in the correct format.");
+    }
+    
+  }
+
+  requestUSNumber() {
+    this.service.requestUSNumber(this.userDetails.userName).subscribe(
       res => {
-        console.log(res);
-        console.log("Forwarding number changed");
         this.getPhoneNumberList("");
+        let ph: any;
+        ph = res;
+        this.toastr.success("Obtained US Number: " + ph.phoneNumber);
+        
       },
       err => {
         console.log(err);
-      
+        this.toastr.error("Error: " + err);
       }
     );
+  }
+
+  requestCANumber() {
+    this.service.requestCANumber(this.userDetails.userName).subscribe(
+      res => {
+        this.getPhoneNumberList("");
+        let ph: any;
+        ph = res;
+        this.toastr.success("Obtained Canadian Number: " + ph.phoneNumber);
+      },
+      err => {
+        console.log(err);
+        this.toastr.error("Error: " + err);
+      }
+    );
+  }
+
+  validateNumber() {
+    let regexp = new RegExp('^[+1][0-9]{11}$');
+    this.changeNumberValid = regexp.test(this.forwardingNumberField);
   }
 
 }

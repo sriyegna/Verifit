@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
-<div class="mt-5">
+<div class="mt-6 col-11 mx-auto">
     <table class="table">
         <thead>
             <tr>
@@ -51,7 +51,8 @@
                         </div>
                         <div class="modal-body">
                         <p>What do you want to change your contact number to?</p>
-                        <input id="renameField" class="form-control" placeholder="+12345678901" [(ngModel)]="newContactNumber">
+                        <input id="renameField" class="form-control" placeholder="+12345678901" (input)="validateChangeNumber()" [(ngModel)]="newContactNumber">
+                        <span *ngIf="!newNumberValid" class="color-red">Number must be in format +12345678910</span>
                         </div>
                         <div class="modal-footer">
                         <button type="button" class="btn btn-danger" ngbAutofocus (click)="submitChangeContactNumber(contact, modal)">Change</button>
@@ -86,7 +87,7 @@
 </div>
 
 <!--- Send button -->
-<button class="btn btn-info btn-circle btn-circle-xl m-1 floating-send" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-paper-plane"></i></button>
+<button class="btn btn-info btn-circle btn-circle-xl m-1 floating-send" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-plus"></i></button>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -106,13 +107,14 @@
 
         <label for="basic-url">Contact Number</label>
         <div class="input-group">
-            <input type="text" class="form-control" placeholder="+12263364243" aria-label="Recipient's Phone Number" aria-describedby="basic-addon2" [(ngModel)]="addContactNumber">
+            <input type="text" class="form-control" placeholder="+12263364243" aria-label="Recipient's Phone Number" aria-describedby="basic-addon2" (input)="validateNumber()" [(ngModel)]="addContactNumber">
         </div>
+        <span *ngIf="!addNumberValid" class="color-red">Number must be in format +12345678910</span>
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" (click)="addContact()" data-dismiss="modal">Send message</button>
+        <button type="button" class="btn btn-primary" (click)="addContact()" data-dismiss="modal">Add Contact</button>
       </div>
     </div>
   </div>

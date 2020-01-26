@@ -6,6 +6,7 @@ import { ConversationComponent } from '../conversation/conversation.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ContactDetail } from '../shared/contact-detail.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-bronze-panel',
@@ -21,8 +22,9 @@ export class BronzePanelComponent implements OnInit {
   messageBody = "";
   closeResult: string;
   newNameField: string;
+  sendNumberValid: boolean;
 
-  constructor(private router:Router, public service:UserService, private conversation:ConversationComponent, private modalService: NgbModal) { }
+  constructor(private router:Router, public service:UserService, private conversation:ConversationComponent, private modalService: NgbModal, private toastr:ToastrService) { }
 
   ngOnInit() {
     this.service.getUserProfile().subscribe(
@@ -96,28 +98,6 @@ export class BronzePanelComponent implements OnInit {
     );
   }
 
-  requestUSNumber() {
-    this.service.requestUSNumber(this.userDetails.userName).subscribe(
-      res => {
-        this.getPhoneNumberList("");
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-
-  requestCANumber() {
-    this.service.requestCANumber(this.userDetails.userName).subscribe(
-      res => {
-        this.getPhoneNumberList("");
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-
 
   callFn(phoneNumber) {
     localStorage.setItem("selectedNumber", phoneNumber);
@@ -134,26 +114,36 @@ export class BronzePanelComponent implements OnInit {
   }
 
   sendMessage() {
-    this.service.sendMessage(this.messageBody, this.selectedNumber, this.recipientPhone).subscribe(
-      res => {
-        this.messageBody = "";
-        this.recipientPhone = "";
-
-      }
-    );
+    if (this.sendNumberValid) {
+      this.service.sendMessage(this.messageBody, this.selectedNumber, this.recipientPhone).subscribe(
+        res => {
+          this.toastr.success("Message sent to: " + this.recipientPhone)
+          this.messageBody = "";
+          this.recipientPhone = "";
+        },
+        err => {
+          this.toastr.error("Error: " + err);
+        }
+      );
+    }
+    else {
+      this.toastr.error("Number is not in the correct format.");
+    }
+    
   }
 
   deleteConversation(conversation, e, modal) {
     modal.close('Save click');
-    console.log("Outputting conversation");
     conversation = this.recreateConversationCase(conversation);
     e.stopPropagation();
     this.service.deleteConversation(conversation).subscribe(
       res => {
         this.service.populateConversations()
+        this.toastr.success("Deleted conversation");
       },
       err => {
         console.log(err);
+        this.toastr.error("Error: " + err);
       }
     )
   }
@@ -166,9 +156,11 @@ export class BronzePanelComponent implements OnInit {
     this.service.renameConversation(conversation).subscribe(
       res => {
         this.service.populateConversations()
+        this.toastr.success("Renamed conversation");
       },
       err => {
         console.log(err);
+        this.toastr.error("Error: " + err);
       }
     )
   }
@@ -206,8 +198,6 @@ export class BronzePanelComponent implements OnInit {
   }
 
   conversationHasContactName(conversation) {
-    console.log("convo has contact");
-    console.log(conversation);
     if (conversation.contactName == 'null' || conversation.contactName == '' || conversation.contactName == undefined) {
       return false;
     }
@@ -233,6 +223,11 @@ export class BronzePanelComponent implements OnInit {
   contactSelected(contact) {
     this.selectedContact = contact;
     this.recipientPhone = contact.phoneNumber;
+  }
+
+  validateNumber() {
+    let regexp = new RegExp('^[+1][0-9]{11}$');
+    this.sendNumberValid = regexp.test(this.recipientPhone);
   }
 
 }

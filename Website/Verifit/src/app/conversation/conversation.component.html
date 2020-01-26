@@ -55,7 +55,7 @@
 
 <app-navbar></app-navbar>
 
-  <div id="listOfMessages" class="mt-5">
+  <div id="listOfMessages" class="mt-6">
     <div class="container" *ngFor="let message of messageList" [ngClass]="classDirection(message)">
       <img src="/assets/img/avatar.png" alt="Avatar">
       <p>{{message.body}}</p>

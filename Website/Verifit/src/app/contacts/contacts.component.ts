@@ -3,6 +3,7 @@ import { UserService } from '../shared/user.service';
 import { ContactDetail } from '../shared/contact-detail.model';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ObjectUnsubscribedError } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-contacts',
@@ -17,8 +18,10 @@ export class ContactsComponent implements OnInit {
   newContactNumber: string;
   addContactName: string;
   addContactNumber: string;
+  addNumberValid: boolean;
+  newNumberValid: boolean;
   
-  constructor(public service: UserService, private modalService:NgbModal) { }
+  constructor(public service: UserService, private modalService:NgbModal, private toastr:ToastrService) { }
 
   ngOnInit() {
     this.service.getUserProfile().subscribe(
@@ -41,8 +44,6 @@ export class ContactsComponent implements OnInit {
   getContactList() {
     this.service.getUsersContacts().subscribe(
       res => {
-        console.log("Obtained contacts");
-        console.log(res);
         this.service.contactList = [];
         let array = res as Array<ContactDetail>;
         for (let element of array) {
@@ -69,11 +70,12 @@ export class ContactsComponent implements OnInit {
     this.service.changeContactName(contact, this.newContactName).subscribe(
       res => {
         this.getContactList();
-        console.log("Changed contact name");
+        this.toastr.success("Changed contact name to: " + this.newContactName);
+        this.newContactName = "";
       },
       err => {
         console.log(err);
-      
+        this.toastr.error("Error: " + err);
       }
     );
   }
@@ -88,18 +90,23 @@ export class ContactsComponent implements OnInit {
   }
 
   submitChangeContactNumber(contact, modal) {
-    modal.close('Save click');
-    console.log("Changing num");    
-    this.service.changeContactNumber(contact, this.newContactNumber).subscribe(
-      res => {
-        this.getContactList();
-        console.log("Changed contact number");
-      },
-      err => {
-        console.log(err);
-      
-      }
-    );
+    if (this.newNumberValid) {
+      modal.close('Save click'); 
+      this.service.changeContactNumber(contact, this.newContactNumber).subscribe(
+        res => {
+          this.getContactList();
+          this.toastr.success("Changed contact number to: " + this.newContactNumber);
+          this.newContactNumber = "";
+        },
+        err => {
+          console.log(err);
+          this.toastr.error("Error: " + err);
+        }
+      );
+    }
+    else {
+      this.toastr.error("Number is not in the correct format.");
+    }
   }
 
   deleteContact(content, e) {
@@ -113,15 +120,14 @@ export class ContactsComponent implements OnInit {
 
   submitDeleteContact(contact, modal) {
     modal.close('Save click');
-    console.log("Deleting contact");    
     this.service.deleteContact(contact).subscribe(
       res => {
         this.getContactList();
-        console.log("Delete contact");
+        this.toastr.success("Deleted contact: " + contact.ContactName);
       },
       err => {
         console.log(err);
-      
+        this.toastr.error("Error: " + err);
       }
     );
   }
@@ -146,15 +152,32 @@ export class ContactsComponent implements OnInit {
   }
 
   addContact() {
-    this.service.addContact(this.addContactName, this.addContactNumber).subscribe(
-      res => {
-        console.log("added contact");
-        this.getContactList();
-      },
-      err => {
-        console.log(err);
-      }
-    )
+    if (this.addNumberValid) {
+      this.service.addContact(this.addContactName, this.addContactNumber).subscribe(
+        res => {
+          this.getContactList();
+          this.toastr.success("Added contact: " + this.addContactName);
+        },
+        err => {
+          console.log(err);
+          this.toastr.error("Error: " + err);
+        }
+      );
+    }
+    else {
+      this.toastr.error("Number is not in the correct format.");
+    }
+    
+  }
+
+  validateNumber() {
+    let regexp = new RegExp('^[+1][0-9]{11}$');
+    this.addNumberValid = regexp.test(this.addContactNumber);
+  }
+
+  validateChangeNumber() {
+    let regexp = new RegExp('^[+1][0-9]{11}$');
+    this.newNumberValid = regexp.test(this.newContactNumber);
   }
 
 }

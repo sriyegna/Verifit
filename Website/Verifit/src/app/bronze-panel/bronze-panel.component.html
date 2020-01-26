@@ -57,18 +57,7 @@
 
 <app-navbar></app-navbar>
 
-  <div class="row mt-5">
-    <div class="offset-4 col-2 my-3">
-      <button class="btn btn-primary" (click)="requestUSNumber()">Get a US number!</button>
-    </div>
- 
-    <div class="col-2 my-3">
-      <button class="btn btn-danger" (click)="requestCANumber()">Get a CA number!</button>
-    </div>
- 
-  </div>
-
- <div class="row mt-5">
+ <div class="row mt-6">
    <div class="offset-5 col-2 my-3">
      <div class="dropdown">
        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -166,9 +155,9 @@
       </div>      
       <div class="modal-body">
         <label for="basic-url">Recipient's Phone Number</label>
-        <div class="input-group mb-3">
+        <div class="input-group">
 
-          <input type="text" class="form-control" placeholder="+12263364243" aria-label="Recipient's Phone Number" aria-describedby="basic-addon2" [(ngModel)]="recipientPhone">
+          <input type="text" id="inputNumber" class="form-control" placeholder="+12263364243" aria-label="Recipient's Phone Number" (input)="validateNumber()" aria-describedby="basic-addon2" [(ngModel)]="recipientPhone">
           <!-- Contact Lookup Modal -->
             <button class="btn btn-secondary btn-circle btn-circle-sm m-1 float-right" (click)="contact(lookupContact, $event)"><i class="fas fa-edit"></i></button>
             <ng-template #lookupContact let-modal>
@@ -195,7 +184,9 @@
             </ng-template>
           <!-- End Contact Lookup Modal -->
         </div>
+        <span class="mb-3 color-red" *ngIf="!sendNumberValid">Number must be in format +12345678910</span>
 
+        <br>
         <label for="basic-url">Message</label>
         <div class="input-group">
           <textarea class="form-control" aria-label="With textarea" [(ngModel)]="messageBody"></textarea>

@@ -5,12 +5,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
+            <!-- 
             <li class="nav-item">
                 <a class="btn btn-danger my-2 mx-3 my-sm-2" routerLink='/adminpanel' *ngIf="service.userDetails">Admin</a>
             </li>
-            <li class="nav-item">
-                    <a class="btn btn-danger my-2 mx-3 my-sm-2" routerLink='/phone-manager' *ngIf="service.userDetails">Phone Manager</a>
-                </li>
+            -->
             <li class="nav-item">
                 <a class="btn btn-primary my-2 mx-3 my-sm-2" routerLink='/home' *ngIf="service.userDetails">Home</a>
             </li>
@@ -18,8 +17,11 @@
                 <a class="btn btn-primary my-2 mx-3 my-sm-2" routerLink='/bronzepanel' *ngIf="service.userDetails">Phone</a>
             </li>
             <li class="nav-item">
-                <a class="btn btn-primary my-2 mx-3 my-sm-2" routerLink='/contact-manager' *ngIf="service.userDetails">Contact Manager</a>
+                <a class="btn btn-danger my-2 mx-3 my-sm-2" routerLink='/contact-manager' *ngIf="service.userDetails">Contact Manager</a>
             </li>
+            <li class="nav-item">
+                <a class="btn btn-danger my-2 mx-3 my-sm-2" routerLink='/phone-manager' *ngIf="service.userDetails">Phone Manager</a>
+        </li>
         </ul>
 
         <a class="btn btn-danger my-2 mx-3 my-sm-2" (click)="service.onLogout()" *ngIf="service.userDetails">Logout</a>

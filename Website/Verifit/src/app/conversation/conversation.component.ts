@@ -62,17 +62,11 @@ export class ConversationComponent implements OnInit {
   }
   
   sendMessage() {
-    console.log(this.messageBody)
     var conversation = JSON.parse(localStorage.getItem("conversation"));
     this.service.sendMessage(this.messageBody, conversation.fromPhoneNumber, conversation.toPhoneNumber).subscribe(
       res => {
-        console.log("Succesful sending");
-        console.log(res);
-
         this.service.getUserConversationMessages(conversation.fromPhoneNumber, conversation.toPhoneNumber).subscribe(
           res => {
-            console.log("Output message details");
-            console.log(res);
             this.messageList = res;
             this.messageBody = "";
             this.scrollTo();
@@ -110,8 +104,6 @@ export class ConversationComponent implements OnInit {
         var conversation = JSON.parse(localStorage.getItem("conversation"));
         this.service.getUserConversationMessages(conversation.fromPhoneNumber, conversation.toPhoneNumber).subscribe(
           res => {
-            console.log("Output message details");
-            console.log(res);
             this.messageList = res;
             this.messageBody = "";
             this.scrollTo();
