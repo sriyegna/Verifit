@@ -58,7 +58,7 @@ export class ContactsComponent implements OnInit {
 
   changeContactName(content, e) {
     e.stopPropagation();
-    this.modalService.open(content, {ariaLabelledBy: 'modal-changeContactName'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-changeContactName', backdrop: false}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -82,7 +82,7 @@ export class ContactsComponent implements OnInit {
 
   changeContactNumber(content, e) {
     e.stopPropagation();
-    this.modalService.open(content, {ariaLabelledBy: 'modal-changeContactNumber'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-changeContactNumber', backdrop: false}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -111,7 +111,7 @@ export class ContactsComponent implements OnInit {
 
   deleteContact(content, e) {
     e.stopPropagation();
-    this.modalService.open(content, {ariaLabelledBy: 'modal-changeContactNumber'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-changeContactNumber', backdrop: false}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;

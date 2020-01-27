@@ -57,7 +57,7 @@ export class PhoneManagerComponent implements OnInit {
 
   changeForward(content, e) {
     e.stopPropagation();
-    this.modalService.open(content, {ariaLabelledBy: 'modal-changeForward'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-changeForward', backdrop: false}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -66,7 +66,7 @@ export class PhoneManagerComponent implements OnInit {
 
   open(content, e) {
     e.stopPropagation();
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', backdrop: false}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
@@ -85,7 +85,7 @@ export class PhoneManagerComponent implements OnInit {
 
   release(content, e) {
     e.stopPropagation();
-    this.modalService.open(content, {ariaLabelledBy: 'modal-release'}).result.then((result) => {
+    this.modalService.open(content, {ariaLabelledBy: 'modal-release', backdrop: false}).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
