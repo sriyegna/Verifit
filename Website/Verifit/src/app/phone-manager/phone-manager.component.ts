@@ -37,6 +37,7 @@ export class PhoneManagerComponent implements OnInit {
   }
 
   getPhoneNumberList(string) {
+    console.log(this.userDetails);
     this.service.getUsersNumbers(this.userDetails.userName).subscribe(
       res => {
         this.service.userPhoneNumbers = res;
@@ -45,6 +46,7 @@ export class PhoneManagerComponent implements OnInit {
         for (let element of array) {
           this.service.phoneNumbers.push(element.PhoneNumber);
         }
+        console.log(this.service.phoneNumbers);
       },
       err => {
         console.log(err);

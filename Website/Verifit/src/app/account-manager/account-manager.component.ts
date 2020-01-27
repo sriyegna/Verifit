@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../shared/user.service';
 import { FormGroup } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-account-manager',
@@ -11,9 +12,13 @@ export class AccountManagerComponent implements OnInit {
 
   userDetails;
 
-  constructor(public service:UserService) { }
+  constructor(public service:UserService, private toastr: ToastrService) { }
 
   ngOnInit() {
+    this.getUserProfile();
+  }
+
+  getUserProfile() {
     this.service.getUserProfile().subscribe(
       res => {
         this.userDetails = res;
@@ -21,6 +26,7 @@ export class AccountManagerComponent implements OnInit {
         this.userDetails.role = payLoad.role;
         this.service.username = this.userDetails.userName;
         this.service.userDetails = this.userDetails;
+
         this.populateAccountModel(this.service.accountModel);
       },
       err => {
@@ -38,7 +44,43 @@ export class AccountManagerComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.service.accountModel);
+    this.service.modifyAccount().subscribe(
+      (res:any) => {
+        console.log(res);
+        if (res.succeeded) {
+          this.service.accountModel.reset();
+          this.getUserProfile();
+          this.toastr.success("Account modified!", "Modification Successful");
+        }
+        else {
+          res.errors.forEach(element => {
+            switch (element.code) {
+              case 'DuplicateUserName':
+                this.toastr.error(element.description, "Modification Failed");
+                break;
+              case 'PasswordRequiresNonAlphanumeric':
+                this.toastr.error("Password requires Non Alphanumeric character", "Modification Failed");
+                break;
+              case 'PasswordRequiresDigit':
+                this.toastr.error("Password requires digit", "Modification Failed");
+                break;
+              case 'PasswordRequiresUpper':
+                this.toastr.error("Password requires uppercase character", "Modification Failed");
+                break;
+              case 'PasswordRequiresLower':
+                this.toastr.error("Password requires lowercase character", "Modification Failed");
+                break;
+              default:
+                this.toastr.error("Error: " + element.code, "Modification Failed");
+                break;
+            }            
+          });
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 
 }

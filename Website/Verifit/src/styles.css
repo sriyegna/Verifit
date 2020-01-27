@@ -140,3 +140,17 @@ div.form-group.required>label:first-child:after{
   .color-red {
     color: red;
   }
+
+  @media only screen and (max-width: 991px) {
+    .center-button {
+      text-align: center;
+    }
+  }
+  
+  .flag-col {
+    width:8%;
+  }
+
+  .flag-image {
+    width:100%;
+  }

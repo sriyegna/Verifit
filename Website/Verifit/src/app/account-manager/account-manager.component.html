@@ -1,6 +1,9 @@
 <app-navbar></app-navbar>
 <div class="wrapper mt-6">
     <div class="wrapped-div">
+        <div class="tab-header">
+            <h2>Modify Account Details</h2>
+        </div>
         <div class="row mt-4">
             <div class="col-md-10 offset-md-1">
                 <form [formGroup]="service.accountModel" autocomplete="off" (submit)="onSubmit()">
@@ -36,7 +39,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-8 offset-md-2">
-                            <button type="submit" class="btn btn-lg btn-block" [disabled]="!service.accountModel.valid">Sign Up!</button>
+                            <button type="submit" class="btn btn-lg btn-block" [disabled]="!service.accountModel.valid">Modify!</button>
                         </div>
                     </div>
                 </form>

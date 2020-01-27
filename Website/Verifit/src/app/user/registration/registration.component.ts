@@ -29,7 +29,18 @@ export class RegistrationComponent implements OnInit {
               case 'DuplicateUserName':
                 this.toastr.error(element.description, "Registration Failed");
                 break;
-
+              case 'PasswordRequiresNonAlphanumeric':
+                this.toastr.error("Password requires Non Alphanumeric character", "Registration Failed");
+                break;
+              case 'PasswordRequiresDigit':
+                this.toastr.error("Password requires digit", "Registration Failed");
+                break;
+              case 'PasswordRequiresUpper':
+                this.toastr.error("Password requires uppercase character", "Registration Failed");
+                break;
+              case 'PasswordRequiresLower':
+                this.toastr.error("Password requires lowercase character", "Registration Failed");
+                break;
               default:
                 this.toastr.error("Error!", "Registration Failed");
                 break;

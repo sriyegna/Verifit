@@ -10,27 +10,27 @@
                 <a class="btn btn-danger my-2 mx-3 my-sm-2" routerLink='/adminpanel' *ngIf="service.userDetails">Admin</a>
             </li>
             -->
-            <li class="nav-item">
+            <li class="nav-item center-button">
                 <a class="btn btn-primary my-2 mx-3 my-sm-2" routerLink='/home' *ngIf="service.userDetails">Home</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item center-button">
                 <a class="btn btn-primary my-2 mx-3 my-sm-2" routerLink='/bronzepanel' *ngIf="service.userDetails">Phone</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item center-button">
                 <a class="btn btn-danger my-2 mx-3 my-sm-2" routerLink='/contact-manager' *ngIf="service.userDetails">Contact Manager</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item center-button">
                 <a class="btn btn-danger my-2 mx-3 my-sm-2" routerLink='/phone-manager' *ngIf="service.userDetails">Phone Manager</a>
             </li>
-            <!-- 
-            <li class="nav-item">
+            <li class="nav-item center-button">
                 <a class="btn btn-danger my-2 mx-3 my-sm-2" routerLink='/account-manager' *ngIf="service.userDetails">Account Manager</a>
             </li>
-            !-->
         </ul>
-
-        <a class="btn btn-danger my-2 mx-3 my-sm-2" (click)="service.onLogout()" *ngIf="service.userDetails">Logout</a>
-        <a class="btn btn-success my-2 mx-3 my-sm-2" (click)="service.onLogin()" *ngIf="!service.userDetails">Login</a>
-        <a class="btn btn-success my-2 mx-3 my-sm-2" (click)="service.onRegister()" *ngIf="!service.userDetails">Register</a>
+        <div class="center-button">
+            <a class="btn btn-danger my-2 mx-3 my-sm-2 center-button" (click)="service.onLogout()" *ngIf="service.userDetails">Logout</a>
+            <a class="btn btn-success my-2 mx-3 my-sm-2 center-button" (click)="service.onLogin()" *ngIf="!service.userDetails">Login</a>
+            <a class="btn btn-success my-2 mx-3 my-sm-2 center-button" (click)="service.onRegister()" *ngIf="!service.userDetails">Register</a>
+        </div>
+        
     </div>
 </nav>

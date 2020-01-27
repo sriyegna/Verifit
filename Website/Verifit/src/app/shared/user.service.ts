@@ -81,6 +81,7 @@ export class UserService {
     localStorage.removeItem('conversation');
     localStorage.removeItem('selectedNumber');
     this.router.navigate(['/user/login']);
+    this.userDetails = null;
   }
 
   onLogin() {
@@ -332,6 +333,26 @@ export class UserService {
       PhoneNumber: addContactNumber
     }
     return this.http.post(this.BaseURI + "/ContactDetails/AddContact", reqObj);
+  }
+
+  modifyAccount() {
+    var body = {
+      OldUserName : this.userDetails.userName,
+      UserName : this.accountModel.value.UserName,
+      Email : this.accountModel.value.Email,
+      FullName : this.accountModel.value.FullName,
+      Password : this.accountModel.value.Passwords.Password,
+      Role : this.userDetails.role
+    };
+
+    return this.http.post(this.BaseURI + "/ApplicationUser/ChangeAccount", body);
+  }
+
+  determineImage(country) {
+    if (country == "CAN") {
+      return false;
+    }
+    return true;
   }
 
 }
