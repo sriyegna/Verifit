@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './phone-manager.component.html',
   styleUrls: ['./phone-manager.component.css']
 })
+
 export class PhoneManagerComponent implements OnInit {
 
   userDetails;

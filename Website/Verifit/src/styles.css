@@ -130,9 +130,12 @@ div.form-group.required>label:first-child:after{
   }
 
   .mt-6 {
-    margin-top: 4rem !important; 
+    margin-top: 5rem !important; 
   }
   
+  .table-center {
+    text-align: center;
+  }
 
   .color-red {
     color: red;
