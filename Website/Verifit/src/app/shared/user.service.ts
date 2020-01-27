@@ -39,6 +39,16 @@ export class UserService {
     },{validator: this.comparePasswords })
   });
 
+  accountModel = this.fb.group({
+    UserName : ['', Validators.required],
+    FullName : ['', Validators.required],
+    Email : ['', [Validators.required,Validators.email]],
+    Passwords : this.fb.group({
+      Password : ['', [Validators.minLength(8)]],
+      ConfirmPassword : [''],
+    },{validator: this.comparePasswords })
+  });
+
   comparePasswords(fb: FormGroup) {
     let confirmPswrdCtrl = fb.get('ConfirmPassword');
     //passwordMismatch

@@ -29,6 +29,7 @@ import { FrontpageComponent } from './frontpage/frontpage.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { PhoneManagerComponent } from './phone-manager/phone-manager.component';
 import { ContactsComponent } from './contacts/contacts.component';
+import { AccountManagerComponent } from './account-manager/account-manager.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { ContactsComponent } from './contacts/contacts.component';
     FrontpageComponent,
     NavbarComponent,
     PhoneManagerComponent,
-    ContactsComponent
+    ContactsComponent,
+    AccountManagerComponent
   ],
   imports: [
     BrowserModule,
