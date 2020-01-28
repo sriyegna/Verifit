@@ -30,6 +30,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { PhoneManagerComponent } from './phone-manager/phone-manager.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { AccountManagerComponent } from './account-manager/account-manager.component';
+import { ReleasetriggerComponent } from './releasetrigger/releasetrigger.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { AccountManagerComponent } from './account-manager/account-manager.compo
     NavbarComponent,
     PhoneManagerComponent,
     ContactsComponent,
-    AccountManagerComponent
+    AccountManagerComponent,
+    ReleasetriggerComponent
   ],
   imports: [
     BrowserModule,

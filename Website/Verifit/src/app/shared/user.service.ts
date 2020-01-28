@@ -355,4 +355,8 @@ export class UserService {
     return true;
   }
 
+  dailyReleaseTrigger() {
+    return this.http.get(this.BaseURI + "/PhoneDetail/DailyReleaseTrigger");
+  }
+
 }
